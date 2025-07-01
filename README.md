@@ -36,7 +36,8 @@ Name the sheet tab as: `EXPENSES`
 ## 🧠 **3. Adding Google Apps Script Code**
 
 1. Create a new project.
-2. Paste the code from `app.js`:
+2. Paste the code from `app.ts` into `app.gs` file.
+3. Create the `.gs` files and paste the code of all the other `.ts` files.
 
 ## 🌐 **4. Deploy as Web App**
 

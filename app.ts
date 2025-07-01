@@ -1,21 +1,3 @@
-
-function authenticate(chatId) {
-  /**
-   * Verifies the origin chat id is authorized.
-   * @param {string} chatId  - Telegram chat ID that originated the request.
-   */
-  if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
-    // catches both null and undefined
-    DEBUG_MODE &&
-      writeToSheet(
-        [`Unauthorized user: ${chatId}`],
-        ERROR_SHEET_NAME
-      );
-    throw new Error(`Unauthorized user: ${chatId}`);
-  }
-  return String(chatId);
-}
-
 function doPost(e) {
   // This is the main function the telegram bot posts to using the webhook
 
