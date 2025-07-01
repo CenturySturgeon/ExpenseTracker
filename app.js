@@ -25,7 +25,7 @@ function toTitleCase(str) {
     .join(" ");
 }
 
-function sendMessage(message, chatId) {
+function sendMessage(chatId, message) {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
   const payload = {
     method: "post",
@@ -59,6 +59,7 @@ function authenticate(chatId) {
     // catches both null and undefined
     throw new Error(`Unauthorized user: ${chatId}`);
   }
+  return chatId
 }
 
 function doPost(e) {
@@ -113,8 +114,8 @@ function doPost(e) {
   }
 
   try {
-    authenticate(update.message ? update.message.chat.id : null);
-    handleUpdate(update);
+    let chatId = authenticate(update.message ? update.message.chat.id : null);
+    handleUpdate(update, chatId);
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
@@ -151,11 +152,10 @@ function doPost(e) {
   }
 }
 
-function handleUpdate(update) {
-  // Extract message text (assuming a simple text message)
-  const messageText = update.message ? update.message.text : "N/A";
-  const chatId = update.message ? update.message.chat.id : "N/A";
-  if (chatId === "N/A" || messageText === "N/A") {
+function handleUpdate(update, chatId) {
+  const message = update.message;
+  const messageText = message ? message.text : "N/A";
+  if (chatId == null || messageText === "N/A") {
     DEBUG_MODE && writeToSheet(["Error handling update"], ERROR_SHEET_NAME);
     return;
   }
@@ -181,6 +181,7 @@ function handleExpenseEntry(text, chatId) {
   if (parts.length < 3) {
     DEBUG_MODE && writeToSheet(["Not enough args"], ERROR_SHEET_NAME);
     sendMessage(
+        chatId,
       "Please use the format: name, amount, category, subcategory (optional), description (optional)"
     );
     return;
@@ -198,6 +199,7 @@ function handleExpenseEntry(text, chatId) {
   const descLine = description || name;
 
   sendMessage(
+    chatId,
     `💸 Expense recorded 💸\n\n📝 *${descLine}*\n💰 $${amount.toFixed(
       2
     )}\n📂 ${catLine}`
@@ -205,7 +207,6 @@ function handleExpenseEntry(text, chatId) {
 }
 
 function handleCommand(command, chatId) {
-  sendMessage("Sup man");
   DEBUG_MODE && writeToSheet(["Sent message"], ERROR_SHEET_NAME);
   return;
   /*
