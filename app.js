@@ -1,8 +1,9 @@
 // PropertiesService Keys
 const TELEGRAM_TOKEN_KEY = 'telegramToken';
 const SPREADSHEET_ID_KEY = 'spreadsheetId';
-const CHAT_MAP_KEY = 'chatMap' // JSON string object {<chatId>: <Alias>}
-const DEBUG_MODE_KEY = 'debugMode'
+const CHAT_MAP_KEY = 'chatMap'; // JSON string object {<chatId>: <Alias>}
+const DEBUG_MODE_KEY = 'debugMode';
+const LAST_UPDATE_ID_KEY = 'lastProcessedUpdateId';
 
 // PropertiesService Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
@@ -10,7 +11,7 @@ const TELEGRAM_TOKEN = SCRIPT_PROPERTIES.getProperty(TELEGRAM_TOKEN_KEY);
 const SPREADSHEET_ID = SCRIPT_PROPERTIES.getProperty(SPREADSHEET_ID_KEY);
 const CHAT_TO_USER = JSON.parse(SCRIPT_PROPERTIES.getProperty(CHAT_ID_OBJECT_KEY));
 const DEBUG_MODE = Boolean(SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY));
-const LAST_UPDATE_ID_PROPERTY_KEY = 'lastProcessedUpdateId';
+
 
 const SHEET_NAME = 'EXPENSES';
 const ERROR_SHEET_NAME = 'ERRORS'
@@ -37,7 +38,7 @@ function doPost(e) {
 
   // Use PropertiesService to get the last processed update ID
   const scriptProperties = PropertiesService.getScriptProperties();
-  const lastProcessedUpdateId = scriptProperties.getProperty(LAST_UPDATE_ID_PROPERTY);
+  const lastProcessedUpdateId = scriptProperties.getProperty(LAST_UPDATE_ID_KEY);
 
   // Check for duplicates
   if (!DEBUG_MODE && lastProcessedUpdateId && Number(updateId) <= Number(lastProcessedUpdateId)) {
@@ -47,13 +48,12 @@ function doPost(e) {
     return ContentService.createTextOutput("OK - Duplicate update ignored").setMimeType(ContentService.MimeType.TEXT);
   }
 
-  // If it's a new update, process it
   try {
     /// DEBUG_MODE && writeErrorToSheet(["Handling Update"]);
     handleUpdate(update);
 
     // After successfully writing, store the new lastProcessedUpdateId
-    !DEBUG_MODE && scriptProperties.setProperty(LAST_UPDATE_ID_PROPERTY, String(updateId));
+    !DEBUG_MODE && scriptProperties.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
 
     DEBUG_MODE && writeErrorToSheet(["Successful Run"]);
     return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
