@@ -114,7 +114,7 @@ function doPost(e) {
         ["Authentication/Handling Error" + error.message],
         ERROR_SHEET_NAME
       );
-    return respondOk( "Error processing request: " + error.message);
+    return respondOk("Error processing request: " + error.message);
   }
 
   try {
