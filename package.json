@@ -1,0 +1,22 @@
+{
+  "name": "expensetracker",
+  "version": "1.0.0",
+  "description": "The main repository for the telegram expense tracker bot.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CenturySturgeon/ExpenseTracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CenturySturgeon/ExpenseTracker/issues"
+  },
+  "homepage": "https://github.com/CenturySturgeon/ExpenseTracker#readme",
+  "devDependencies": {
+    "@types/google-apps-script": "^1.0.99"
+  }
+}
