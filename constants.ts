@@ -1,0 +1,18 @@
+// PropertiesService Keys
+const TELEGRAM_TOKEN_KEY = "telegramToken";
+const SPREADSHEET_ID_KEY = "spreadsheetId";
+const CHAT_MAP_KEY = "chatMap"; // JSON string object {<chatId>: <Alias>}
+const DEBUG_MODE_KEY = "debugMode";
+const LAST_UPDATE_ID_KEY = "lastProcessedUpdateId";
+
+// PropertiesService Values
+const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
+const TELEGRAM_TOKEN = SCRIPT_PROPERTIES.getProperty(TELEGRAM_TOKEN_KEY);
+const SPREADSHEET_ID = SCRIPT_PROPERTIES.getProperty(SPREADSHEET_ID_KEY);
+const CHAT_TO_USER = JSON.parse(SCRIPT_PROPERTIES.getProperty(CHAT_MAP_KEY));
+const DEBUG_MODE = Boolean(
+  SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY) === "true"
+);
+
+const EXPENSES_SHEET = "EXPENSES";
+const ERROR_SHEET_NAME = "ERRORS";
