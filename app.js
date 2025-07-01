@@ -42,9 +42,7 @@ function writeToSheet(row, sheetName) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
-    return ContentService.createTextOutput(
-      "Error: Sheet not found."
-    ).setMimeType(ContentService.MimeType.TEXT);
+    return respondOk("Error: Sheet not found.");
   }
   const row_with_timestamp = [new Date(), ...row];
   sheet.appendRow(row_with_timestamp);
@@ -59,7 +57,7 @@ function authenticate(chatId) {
     // catches both null and undefined
     throw new Error(`Unauthorized user: ${chatId}`);
   }
-  return chatId
+  return chatId;
 }
 
 function doPost(e) {
@@ -75,9 +73,7 @@ function doPost(e) {
         ["Error parsing Telegram update: " + error.message],
         ERROR_SHEET_NAME
       );
-    return ContentService.createTextOutput(
-      "Error: Invalid JSON payload"
-    ).setMimeType(ContentService.MimeType.TEXT);
+    return respondOk("Error: Invalid JSON payload");
   }
 
   // Extract the unique update_id
@@ -85,9 +81,7 @@ function doPost(e) {
   if (!updateId) {
     DEBUG_MODE &&
       writeToSheet(["No update_id found in payload."], ERROR_SHEET_NAME);
-    return ContentService.createTextOutput(
-      "Error: No update_id provided"
-    ).setMimeType(ContentService.MimeType.TEXT);
+    return respondOk("Error: No update_id provided");
   }
 
   // Use PropertiesService to get the last processed update ID
@@ -108,9 +102,7 @@ function doPost(e) {
       );
     // Important: Always return a 200 OK even for duplicates,
     // otherwise Telegram will keep retrying.
-    return ContentService.createTextOutput(
-      "OK - Duplicate update ignored"
-    ).setMimeType(ContentService.MimeType.TEXT);
+    return respondOk("OK - Duplicate update ignored");
   }
 
   try {
@@ -122,9 +114,7 @@ function doPost(e) {
         ["Authentication/Handling Error" + error.message],
         ERROR_SHEET_NAME
       );
-    return ContentService.createTextOutput(
-      "Error processing request: " + error.message
-    ).setMimeType(ContentService.MimeType.TEXT);
+    return respondOk( "Error processing request: " + error.message);
   }
 
   try {
@@ -133,9 +123,7 @@ function doPost(e) {
       scriptProperties.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
 
     DEBUG_MODE && writeToSheet(["Successful Run"], ERROR_SHEET_NAME);
-    return ContentService.createTextOutput("OK").setMimeType(
-      ContentService.MimeType.TEXT
-    );
+    return respondOk();
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
@@ -146,9 +134,7 @@ function doPost(e) {
     // but for Telegram webhooks, often 200 OK is best to prevent retries
     // unless you want Telegram to retry. For data integrity, ignoring
     // the retry and logging the error is often preferred.
-    return ContentService.createTextOutput(
-      "Error processing request: " + error.message
-    ).setMimeType(ContentService.MimeType.TEXT);
+    return respondOk("Error processing request: " + error.message);
   }
 }
 
@@ -181,7 +167,7 @@ function handleExpenseEntry(text, chatId) {
   if (parts.length < 3) {
     DEBUG_MODE && writeToSheet(["Not enough args"], ERROR_SHEET_NAME);
     sendMessage(
-        chatId,
+      chatId,
       "Please use the format: name, amount, category, subcategory (optional), description (optional)"
     );
     return;
@@ -228,4 +214,18 @@ function handleCommand(command, chatId) {
     sendMessage(chatId, "Available commands: /day /week /month");
   }
   */
+}
+
+// API Return Functions
+
+function respondOk(message = "Ok") {
+  return HtmlService.createHtmlOutput(message).setMimeType(
+    ContentService.MimeType.TEXT
+  );
+}
+
+function respondJson(obj) {
+  return HtmlService.createHtmlOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON
+  );
 }
