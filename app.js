@@ -50,6 +50,17 @@ function writeToSheet(row, sheetName) {
   sheet.appendRow(row_with_timestamp);
 }
 
+function authenticate(chatId) {
+  /**
+   * Verifies the origin chat id is authorized.
+   * @param {string} chatId  - Telegram chat ID that originated the request.
+   */
+  if (chatId == null || !(chatId in CHAT_TO_USER)) {
+    // catches both null and undefined
+    throw new Error(`Unauthorized user: ${chatId}`);
+  }
+}
+
 function doPost(e) {
   // This is the main function the telegram bot posts to using the webhook
 
@@ -59,7 +70,10 @@ function doPost(e) {
     update = JSON.parse(e.postData.contents);
   } catch (error) {
     DEBUG_MODE &&
-      writeToSheet(["Error parsing Telegram update: " + error.message], ERROR_SHEET_NAME);
+      writeToSheet(
+        ["Error parsing Telegram update: " + error.message],
+        ERROR_SHEET_NAME
+      );
     return ContentService.createTextOutput(
       "Error: Invalid JSON payload"
     ).setMimeType(ContentService.MimeType.TEXT);
@@ -68,7 +82,8 @@ function doPost(e) {
   // Extract the unique update_id
   const updateId = update.update_id;
   if (!updateId) {
-    DEBUG_MODE && writeToSheet(["No update_id found in payload."], ERROR_SHEET_NAME);
+    DEBUG_MODE &&
+      writeToSheet(["No update_id found in payload."], ERROR_SHEET_NAME);
     return ContentService.createTextOutput(
       "Error: No update_id provided"
     ).setMimeType(ContentService.MimeType.TEXT);
@@ -86,9 +101,10 @@ function doPost(e) {
     Number(updateId) <= Number(lastProcessedUpdateId)
   ) {
     DEBUG_MODE &&
-      writeToSheet([
-        "Duplicate or old update_id received. Ignoring: " + updateId,
-      ], ERROR_SHEET_NAME);
+      writeToSheet(
+        ["Duplicate or old update_id received. Ignoring: " + updateId],
+        ERROR_SHEET_NAME
+      );
     // Important: Always return a 200 OK even for duplicates,
     // otherwise Telegram will keep retrying.
     return ContentService.createTextOutput(
@@ -97,8 +113,20 @@ function doPost(e) {
   }
 
   try {
+    authenticate(update.message ? update.message.chat.id : null);
     handleUpdate(update);
+  } catch (error) {
+    DEBUG_MODE &&
+      writeToSheet(
+        ["Authentication/Handling Error" + error.message],
+        ERROR_SHEET_NAME
+      );
+    return ContentService.createTextOutput(
+      "Error processing request: " + error.message
+    ).setMimeType(ContentService.MimeType.TEXT);
+  }
 
+  try {
     // After successfully writing, store the new lastProcessedUpdateId
     !DEBUG_MODE &&
       scriptProperties.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
@@ -109,9 +137,10 @@ function doPost(e) {
     );
   } catch (error) {
     DEBUG_MODE &&
-      writeToSheet([
-        "Error processing webhook or writing to sheet: " + error.message,
-      ], ERROR_SHEET_NAME);
+      writeToSheet(
+        ["Error processing webhook or writing to sheet: " + error.message],
+        ERROR_SHEET_NAME
+      );
     // You might want to return a different status code for unrecoverable errors,
     // but for Telegram webhooks, often 200 OK is best to prevent retries
     // unless you want Telegram to retry. For data integrity, ignoring
@@ -132,11 +161,17 @@ function handleUpdate(update) {
   }
   if (messageText.startsWith("/")) {
     DEBUG_MODE &&
-      writeToSheet(["Successfully handling command: " + messageText], ERROR_SHEET_NAME);
+      writeToSheet(
+        ["Successfully handling command: " + messageText],
+        ERROR_SHEET_NAME
+      );
     handleCommand(messageText, chatId);
   } else {
     DEBUG_MODE &&
-      writeToSheet(["About to handle expenses: " + messageText], ERROR_SHEET_NAME);
+      writeToSheet(
+        ["About to handle expenses: " + messageText],
+        ERROR_SHEET_NAME
+      );
     handleExpenseEntry(messageText, chatId);
   }
 }
@@ -193,5 +228,3 @@ function handleCommand(command, chatId) {
   }
   */
 }
-
-
