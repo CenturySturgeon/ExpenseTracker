@@ -9,12 +9,12 @@ const LAST_UPDATE_ID_KEY = "lastProcessedUpdateId";
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
 const TELEGRAM_TOKEN = SCRIPT_PROPERTIES.getProperty(TELEGRAM_TOKEN_KEY);
 const SPREADSHEET_ID = SCRIPT_PROPERTIES.getProperty(SPREADSHEET_ID_KEY);
-const CHAT_TO_USER = JSON.parse(
-  SCRIPT_PROPERTIES.getProperty(CHAT_ID_OBJECT_KEY)
+const CHAT_TO_USER = JSON.parse(SCRIPT_PROPERTIES.getProperty(CHAT_MAP_KEY));
+const DEBUG_MODE = Boolean(
+  SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY) === "true"
 );
-const DEBUG_MODE = Boolean(SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY));
 
-const SHEET_NAME = "EXPENSES";
+const EXPENSES_SHEET = "EXPENSES";
 const ERROR_SHEET_NAME = "ERRORS";
 
 function toTitleCase(str) {
@@ -53,11 +53,16 @@ function authenticate(chatId) {
    * Verifies the origin chat id is authorized.
    * @param {string} chatId  - Telegram chat ID that originated the request.
    */
-  if (chatId == null || !(chatId in CHAT_TO_USER)) {
+  if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
     // catches both null and undefined
+    DEBUG_MODE &&
+      writeToSheet(
+        [`Unauthorized user: ${chatId}`],
+        ERROR_SHEET_NAME
+      );
     throw new Error(`Unauthorized user: ${chatId}`);
   }
-  return chatId;
+  return String(chatId);
 }
 
 function doPost(e) {
@@ -67,6 +72,11 @@ function doPost(e) {
   let update;
   try {
     update = JSON.parse(e.postData.contents);
+    DEBUG_MODE &&
+      writeToSheet(
+        ["Received request: " + JSON.stringify(update)],
+        ERROR_SHEET_NAME
+      );
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
@@ -106,12 +116,12 @@ function doPost(e) {
   }
 
   try {
-    let chatId = authenticate(update.message ? update.message.chat.id : null);
-    handleUpdate(update, chatId);
+    const chat_id = authenticate(update.message ? update.message.chat.id : null);
+    handleUpdate(update, chat_id);
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
-        ["Authentication/Handling Error" + error.message],
+        ["Handling Error: " + error.message],
         ERROR_SHEET_NAME
       );
     return respondOk("Error processing request: " + error.message);
@@ -173,13 +183,14 @@ function handleExpenseEntry(text, chatId) {
     return;
   }
 
-  const name = toTitleCase(parts[0]);
-  const amount = parseFloat(parts[1].trim());
-  const category = toTitleCase(parts[2]);
-  const subcategory = toTitleCase(parts[3]) ?? null;
-  const description = toTitleCase(parts[4]) ?? null;
+  const name = toTitleCase(String(parts[0]));
+  const amount = parseFloat(String(parts[1].trim()));
+  const category = toTitleCase(String(parts[2]));
 
-  writeToSheet([name, amount, category, subcategory, description]);
+  const subcategory = parts[3] ? toTitleCase(String(parts[3])) : null;
+  const description = parts[4] ? toTitleCase(String(parts[4])) : null;
+
+  writeToSheet([name, amount, category, subcategory, description], EXPENSES_SHEET);
 
   const catLine = subcategory ? `${category} / ${subcategory}` : category;
   const descLine = description || name;
@@ -197,7 +208,7 @@ function handleCommand(command, chatId) {
   return;
   /*
   let total = 0;
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(EXPENSES_SHEET);
   const data = sheet.getDataRange().getValues();
   const now = new Date();
 
@@ -219,13 +230,9 @@ function handleCommand(command, chatId) {
 // API Return Functions
 
 function respondOk(message = "Ok") {
-  return HtmlService.createHtmlOutput(message).setMimeType(
-    ContentService.MimeType.TEXT
-  );
+  return HtmlService.createHtmlOutput(message);
 }
 
 function respondJson(obj) {
-  return HtmlService.createHtmlOutput(JSON.stringify(obj)).setMimeType(
-    ContentService.MimeType.JSON
-  );
+  return HtmlService.createHtmlOutput(JSON.stringify(obj));
 }
