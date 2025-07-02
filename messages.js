@@ -45,16 +45,13 @@ function help_command_message(
 ) {
   return `🛠 *Available Commands* 🛠
 
-
-  🚀 /start Start the bot and see a welcome message
-
-  ℹ️ /help Show this list of commands
-
   🗓️ /month View a summary of your spending for the current month _\\(not available\\)_
 
   🐷 /budget Check your budget alignment for the month and year _\\(not available\\)_
 
   🗂️ /cats Get a list of all your logged categories _\\(not available\\)_
+
+  ℹ️ /help Show this list of commands
 
 
 💸 *Submitting an Expense* 💸
