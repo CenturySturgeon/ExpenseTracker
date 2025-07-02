@@ -31,6 +31,8 @@ Here's what I can help you with:
 📊 Summarize your monthly spending  
 🎯 Keep you on budget and reaching your goals
 
-Type /help to see what I can do, or just send me an amount to get started.
+Type /help to see what I can do, or just send me an expense in the following format to get started:
+
+Expense Name, Amount, Category,	Subcategory,	Description
 `;
 }
