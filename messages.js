@@ -6,9 +6,9 @@
  * @return {string} The formatted message the bot will reply with.
  */
 function message_expense_confirmation(
-  name_or_description: string,
-  amount: number,
-  category: string
+  name_or_description,
+  amount,
+  category
 ) {
   return `💸 Expense recorded 💸\n\n📝 *${name_or_description}*\n💰 $${amount.toFixed(
     2

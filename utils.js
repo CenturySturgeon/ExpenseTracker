@@ -3,9 +3,9 @@
    * @param {string} chatId Chat/User who'll receive the message.
    * @param {string} message Message that will be sent.
    */
-function sendMessage(chatId: string, message: string, parseMode = "Markdown") {
+function sendMessage(chatId, message, parseMode = "Markdown") {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-  const payload: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+  const payload = {
     method: "post",
     contentType: "application/json",
     payload: JSON.stringify({
@@ -23,7 +23,7 @@ function sendMessage(chatId: string, message: string, parseMode = "Markdown") {
  * @param {string} row  - Array containing the cells to append to the sheet.
  * @param {any[]} sheetName  - Name of the sheet where the row will be added.
  */
-function writeToSheet(row: any[], sheetName: string) {
+function writeToSheet(row, sheetName) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
@@ -37,7 +37,7 @@ function writeToSheet(row: any[], sheetName: string) {
  * Verifies the origin chat id is authorized to perform actions.
  * @param {string} chatId  - Telegram chat ID that originated the request.
  */
-function authenticate(chatId: string) {
+function authenticate(chatId) {
   if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
     // catches both null and undefined
     DEBUG_MODE &&
@@ -52,7 +52,7 @@ function authenticate(chatId: string) {
  * @param {string} str  - The string to convert.
  * @returns {number} The string argument in title case.
  */
-function toTitleCase(str: string): string {
+function toTitleCase(str) {
   return str
     .toLowerCase()
     .split(" ")
