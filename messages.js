@@ -10,9 +10,11 @@ function message_expense_confirmation(
   amount,
   category
 ) {
-  return `💸 Expense recorded 💸\n\n📝 *${name_or_description}*\n💰 $${amount.toFixed(
-    2
-  )}\n📂 ${category}`;
+  return `💸 Expense recorded 💸
+
+📝 *${name_or_description}*
+💰 $${amount.toFixed(2)}
+📂 ${category}`;
 }
 
 /**
@@ -22,12 +24,11 @@ function message_expense_confirmation(
 function start_command_message(
 ) {
   return `
-✨ *Hi there! I'm your personal expense assistant.*  
-I'll help you take control of your money — simply and confidently.
+✨ Hi there! I'm your personal expense assistant ✨  
 
 Here's what I can help you with:  
 📌 Track daily expenses  
-📊 Summarize your spending  
+📊 Summarize your monthly spending  
 🎯 Keep you on budget and reaching your goals
 
 Type /help to see what I can do, or just send me an amount to get started.

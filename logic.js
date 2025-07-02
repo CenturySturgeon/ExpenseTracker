@@ -50,25 +50,18 @@ function handleExpenseEntry(text, chatId) {
 
   sendMessage(
     chatId,
-    `💸 Expense recorded 💸\n\n📝 *${descLine}*\n💰 $${amount.toFixed(
-      2
-    )}\n📂 ${catLine}`
+    message_expense_confirmation(descLine, amount, catLine)
   );
 }
 
 function handleCommand(command, chatId) {
   DEBUG_MODE && writeToSheet(["Sent message"], LOG_SHEET);
-  return;
-  /*
-  let total = 0;
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(EXPENSES_SHEET);
-  const data = sheet.getDataRange().getValues();
-  const now = new Date();
 
-  if (command === "/day") {
-    total = getTotalSince(data, 1);
-    sendMessage(chatId, `Today's spending: ₹${total}`);
-  } else if (command === "/week") {
+  if (command === "/start") {
+    sendMessage(chatId, start_command_message());
+  } 
+  /*
+  else if (command === "/week") {
     total = getTotalSince(data, 7);
     sendMessage(chatId, `This week's spending: ₹${total}`);
   } else if (command === "/month") {
