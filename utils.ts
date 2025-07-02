@@ -1,9 +1,9 @@
-function sendMessage(chatId: string, message: string) {
-  /**
-   * Writes a row, using the row array, to the provided sheet.
-   * @param {string} row  - Array containing the cells to append to the sheet.
-   * @param {any[]} sheetName  - Name of the sheet where the row will be added.
+/**
+   * Sends a message to a user via a Telegram bot.
+   * @param {string} chatId Chat/User who'll receive the message.
+   * @param {string} message Message that will be sent.
    */
+function sendMessage(chatId: string, message: string, parseMode = "Markdown") {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
   const payload: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
@@ -11,6 +11,7 @@ function sendMessage(chatId: string, message: string) {
     payload: JSON.stringify({
       chat_id: chatId,
       text: message,
+      parse_mode: parseMode,
     }),
   };
 

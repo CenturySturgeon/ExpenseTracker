@@ -14,3 +14,22 @@ function message_expense_confirmation(
     2
   )}\n📂 ${category}`;
 }
+
+/**
+ * Returns the Telegram message when initializing conversation with bot.
+ * @return {string} The formatted message the bot will reply with.
+ */
+function start_command_message(
+) {
+  return `
+✨ *Hi there! I'm your personal expense assistant.*  
+I'll help you take control of your money — simply and confidently.
+
+Here's what I can help you with:  
+📌 Track daily expenses  
+📊 Summarize your spending  
+🎯 Keep you on budget and reaching your goals
+
+Type /help to see what I can do, or just send me an amount to get started.
+`;
+}
