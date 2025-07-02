@@ -4,6 +4,7 @@ const SPREADSHEET_ID_KEY = "spreadsheetId";
 const CHAT_MAP_KEY = "chatMap"; // JSON string object {<Chat Id>: <User Alias>}
 const DEBUG_MODE_KEY = "debugMode";
 const LAST_UPDATE_ID_KEY = "lastProcessedUpdateId";
+const LOG_SHEET_KEY = "logSheetName";
 
 // PropertiesService (env) Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
@@ -14,5 +15,6 @@ const DEBUG_MODE = Boolean(
   SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY) === "true"
 );
 
+// Google Spreadsheets sheet names 
 const EXPENSES_SHEET = "EXPENSES";
-const LOG_SHEET = "ERRORS";
+const LOG_SHEET = SCRIPT_PROPERTIES.getProperty(LOG_SHEET_KEY);

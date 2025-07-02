@@ -58,8 +58,11 @@ function handleCommand(command, chatId) {
   DEBUG_MODE && writeToSheet(["Sent message"], LOG_SHEET);
 
   if (command === "/start") {
-    sendMessage(chatId, start_command_message());
-  } 
+    alias = (chatId in CHAT_TO_USER) ?CHAT_TO_USER[chatId] : '';
+    sendMessage(chatId, start_command_message(alias));
+  } else if (command === "/help"){
+    sendMessage(chatId, help_command_message());
+  }
   /*
   else if (command === "/week") {
     total = getTotalSince(data, 7);
