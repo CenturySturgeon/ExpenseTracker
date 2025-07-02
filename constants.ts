@@ -1,11 +1,11 @@
-// PropertiesService Keys
+// PropertiesService (env) Keys
 const TELEGRAM_TOKEN_KEY = "telegramToken";
 const SPREADSHEET_ID_KEY = "spreadsheetId";
-const CHAT_MAP_KEY = "chatMap"; // JSON string object {<chatId>: <Alias>}
+const CHAT_MAP_KEY = "chatMap"; // JSON string object {<Chat Id>: <User Alias>}
 const DEBUG_MODE_KEY = "debugMode";
 const LAST_UPDATE_ID_KEY = "lastProcessedUpdateId";
 
-// PropertiesService Values
+// PropertiesService (env) Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
 const TELEGRAM_TOKEN = SCRIPT_PROPERTIES.getProperty(TELEGRAM_TOKEN_KEY);
 const SPREADSHEET_ID = SCRIPT_PROPERTIES.getProperty(SPREADSHEET_ID_KEY);
