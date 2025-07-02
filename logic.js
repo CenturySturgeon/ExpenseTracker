@@ -61,17 +61,8 @@ function handleCommand(command, chatId) {
     alias = (chatId in CHAT_TO_USER) ?CHAT_TO_USER[chatId] : '';
     sendMessage(chatId, start_command_message(alias));
   } else if (command === "/help"){
-    sendMessage(chatId, help_command_message());
-  }
-  /*
-  else if (command === "/week") {
-    total = getTotalSince(data, 7);
-    sendMessage(chatId, `This week's spending: ₹${total}`);
-  } else if (command === "/month") {
-    total = getTotalSince(data, 30);
-    sendMessage(chatId, `This month's spending: ₹${total}`);
+    sendMessage(chatId, help_command_message(), "MarkdownV2");
   } else {
-    sendMessage(chatId, "Available commands: /day /week /month");
+    return
   }
-  */
 }

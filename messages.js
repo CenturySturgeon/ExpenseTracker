@@ -33,8 +33,7 @@ Here's what I can help you with:
 📊 Summarize your monthly spending  
 🎯 Keep you on budget and reaching your goals
 
-Type /help to see what I can do, or just send me an expense in the following format to get started:
-**Expense Name, Amount, Category,	Subcategory (optional),	Description (optional)**
+Type /help to see what I can do! 🔍
 `;
 }
 
@@ -44,23 +43,34 @@ Type /help to see what I can do, or just send me an expense in the following for
  */
 function help_command_message(
 ) {
-  return `
-🛠 Available Commands 🛠
+  return `🛠 *Available Commands* 🛠
 
-- /start Start the bot and see a welcome message  
-- /help Show this list of commands
-- /month View a summary of your spending for the current month _(not available)_
-- /budget Check your budget alignment for the month and year _(not available)_
-- /cats Get a list of all your logged categories _(not available)_
 
-💸 Submitting an Expense 💸
+  🚀 /start Start the bot and see a welcome message
 
-Just send me a message with the following fields separated by commas:  
-**Expense Name, Amount, Category, Subcategory (optional), Description (optional)**
+  ℹ️ /help Show this list of commands
 
-Example:
+  🗓️ /month View a summary of your spending for the current month _\\(not available\\)_
+
+  🐷 /budget Check your budget alignment for the month and year _\\(not available\\)_
+
+  🗂️ /cats Get a list of all your logged categories _\\(not available\\)_
+
+
+💸 *Submitting an Expense* 💸
+
+Send me a message with the following fields separated by commas:
+
+  • *Expense Name*
+  • *Amount*
+  • *Category*
+  • Subcategory _\\(optional\\)_
+  • Description _\\(optional\\)_
+
+*Example:*  
 Apples, 50, Food, Groceries, Green apples
 
-**More features coming soon!** 🚀
+
+More features coming soon\\! 💹
 `;
 }
