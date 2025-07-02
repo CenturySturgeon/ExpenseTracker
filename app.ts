@@ -8,13 +8,13 @@ function doPost(e) {
     DEBUG_MODE &&
       writeToSheet(
         ["Received request: " + JSON.stringify(update)],
-        ERROR_SHEET_NAME
+        LOG_SHEET
       );
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
         ["Error parsing Telegram update: " + error.message],
-        ERROR_SHEET_NAME
+        LOG_SHEET
       );
     return respondOk("Error: Invalid JSON payload");
   }
@@ -23,7 +23,7 @@ function doPost(e) {
   const updateId = update.update_id;
   if (!updateId) {
     DEBUG_MODE &&
-      writeToSheet(["No update_id found in payload."], ERROR_SHEET_NAME);
+      writeToSheet(["No update_id found in payload."], LOG_SHEET);
     return respondOk("Error: No update_id provided");
   }
 
@@ -40,7 +40,7 @@ function doPost(e) {
     DEBUG_MODE &&
       writeToSheet(
         ["Duplicate or old update_id received. Ignoring: " + updateId],
-        ERROR_SHEET_NAME
+        LOG_SHEET
       );
     // Important: Always return a 200 OK even for duplicates,
     // otherwise Telegram will keep retrying.
@@ -54,7 +54,7 @@ function doPost(e) {
     handleUpdate(update, chat_id);
   } catch (error) {
     DEBUG_MODE &&
-      writeToSheet(["Handling Error: " + error.message], ERROR_SHEET_NAME);
+      writeToSheet(["Handling Error: " + error.message], LOG_SHEET);
     return respondOk("Error processing request: " + error.message);
   }
 
@@ -63,13 +63,13 @@ function doPost(e) {
     !DEBUG_MODE &&
       scriptProperties.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
 
-    DEBUG_MODE && writeToSheet(["Successful Run"], ERROR_SHEET_NAME);
+    DEBUG_MODE && writeToSheet(["Successful Run"], LOG_SHEET);
     return respondOk();
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
         ["Error processing webhook or writing to sheet: " + error.message],
-        ERROR_SHEET_NAME
+        LOG_SHEET
       );
     return respondOk("Error processing request: " + error.message);
   }

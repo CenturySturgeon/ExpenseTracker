@@ -40,7 +40,7 @@ function authenticate(chatId: string) {
   if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
     // catches both null and undefined
     DEBUG_MODE &&
-      writeToSheet([`Unauthorized user: ${chatId}`], ERROR_SHEET_NAME);
+      writeToSheet([`Unauthorized user: ${chatId}`], LOG_SHEET);
     throw new Error(`Unauthorized user: ${chatId}`);
   }
   return String(chatId);

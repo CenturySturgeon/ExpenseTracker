@@ -2,21 +2,21 @@ function handleUpdate(update, chatId) {
   const message = update.message;
   const messageText = message ? message.text : "N/A";
   if (chatId == null || messageText === "N/A") {
-    DEBUG_MODE && writeToSheet(["Error handling update"], ERROR_SHEET_NAME);
+    DEBUG_MODE && writeToSheet(["Error handling update"], LOG_SHEET);
     return;
   }
   if (messageText.startsWith("/")) {
     DEBUG_MODE &&
       writeToSheet(
         ["Successfully handling command: " + messageText],
-        ERROR_SHEET_NAME
+        LOG_SHEET
       );
     handleCommand(messageText, chatId);
   } else {
     DEBUG_MODE &&
       writeToSheet(
         ["About to handle expenses: " + messageText],
-        ERROR_SHEET_NAME
+        LOG_SHEET
       );
     handleExpenseEntry(messageText, chatId);
   }
@@ -25,7 +25,7 @@ function handleUpdate(update, chatId) {
 function handleExpenseEntry(text, chatId) {
   const parts = text.split(",");
   if (parts.length < 3) {
-    DEBUG_MODE && writeToSheet(["Not enough args"], ERROR_SHEET_NAME);
+    DEBUG_MODE && writeToSheet(["Not enough args"], LOG_SHEET);
     sendMessage(
       chatId,
       "Please use the format: name, amount, category, subcategory (optional), description (optional)"
@@ -57,7 +57,7 @@ function handleExpenseEntry(text, chatId) {
 }
 
 function handleCommand(command, chatId) {
-  DEBUG_MODE && writeToSheet(["Sent message"], ERROR_SHEET_NAME);
+  DEBUG_MODE && writeToSheet(["Sent message"], LOG_SHEET);
   return;
   /*
   let total = 0;

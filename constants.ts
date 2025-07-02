@@ -15,4 +15,4 @@ const DEBUG_MODE = Boolean(
 );
 
 const EXPENSES_SHEET = "EXPENSES";
-const ERROR_SHEET_NAME = "ERRORS";
+const LOG_SHEET = "ERRORS";
