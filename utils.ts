@@ -5,7 +5,7 @@ function sendMessage(chatId: string, message: string) {
    * @param {any[]} sheetName  - Name of the sheet where the row will be added.
    */
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-  const payload = {
+  const payload: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
     contentType: "application/json",
     payload: JSON.stringify({
@@ -13,21 +13,9 @@ function sendMessage(chatId: string, message: string) {
       text: message,
     }),
   };
+
   UrlFetchApp.fetch(url, payload);
 }
-
-// const payload: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-//   method: 'post',
-//   contentType: 'application/json',
-//   payload: JSON.stringify({
-//     chat_id: chatId,
-//     text: message,
-//   }),
-// };
-
-// UrlFetchApp.fetch(url, payload);
-
-
 
 /**
  * Writes a row, using the row array, to the provided sheet.
@@ -52,10 +40,7 @@ function authenticate(chatId: string) {
   if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
     // catches both null and undefined
     DEBUG_MODE &&
-      writeToSheet(
-        [`Unauthorized user: ${chatId}`],
-        ERROR_SHEET_NAME
-      );
+      writeToSheet([`Unauthorized user: ${chatId}`], ERROR_SHEET_NAME);
     throw new Error(`Unauthorized user: ${chatId}`);
   }
   return String(chatId);
@@ -76,20 +61,10 @@ function toTitleCase(str: string): string {
 
 // API Return Functions
 function respondOk(message = "Ok") {
+  // For Telegram webhooks, 200 OK is best to prevent retries.
   return HtmlService.createHtmlOutput(message);
 }
 
 function respondJson(obj) {
   return HtmlService.createHtmlOutput(JSON.stringify(obj));
-}
-
-// Telegram Message Functions
-function message_expense_confirmation(
-  name_or_description: string,
-  amount: number,
-  category_line: string
-) {
-  return `💸 Expense recorded 💸\n\n📝 *${name_or_description}*\n💰 $${amount.toFixed(
-    2
-  )}\n📂 ${category_line}`;
 }
