@@ -14,10 +14,7 @@ function handleUpdate(update, chatId) {
     handleCommand(messageText, chatId);
   } else {
     DEBUG_MODE &&
-      writeToSheet(
-        ["About to handle expenses: " + messageText],
-        LOG_SHEET
-      );
+      writeToSheet(["About to handle expenses: " + messageText], LOG_SHEET);
     handleExpenseEntry(messageText, chatId);
   }
 }
@@ -48,21 +45,20 @@ function handleExpenseEntry(text, chatId) {
   const catLine = subcategory ? `${category} / ${subcategory}` : category;
   const descLine = description || name;
 
-  sendMessage(
-    chatId,
-    message_expense_confirmation(descLine, amount, catLine)
-  );
+  sendMessage(chatId, message_expense_confirmation(descLine, amount, catLine));
 }
 
 function handleCommand(command, chatId) {
   DEBUG_MODE && writeToSheet(["Sent message"], LOG_SHEET);
 
   if (command === "/start") {
-    alias = (chatId in CHAT_TO_USER) ?CHAT_TO_USER[chatId] : '';
+    alias = chatId in CHAT_TO_USER ? CHAT_TO_USER[chatId] : "";
     sendMessage(chatId, start_command_message(alias));
-  } else if (command === "/help"){
+  } else if (command === "/help") {
     sendMessage(chatId, help_command_message(), "MarkdownV2");
+  } else if (command === "/month") {
+    const month = MONTH_ZERO_INDEXED + 2; // +1 since G sheets are 1-indexed, + 1 for sheet headers
   } else {
-    return
+    return;
   }
 }

@@ -1,8 +1,8 @@
 /**
-   * Sends a message to a user via a Telegram bot.
-   * @param {string} chatId Chat/User who'll receive the message.
-   * @param {string} message Message that will be sent.
-   */
+ * Sends a message to a user via a Telegram bot.
+ * @param {string} chatId Chat/User who'll receive the message.
+ * @param {string} message Message that will be sent.
+ */
 function sendMessage(chatId, message, parseMode = "Markdown") {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
   const payload = {
@@ -34,14 +34,27 @@ function writeToSheet(row, sheetName) {
 }
 
 /**
+ * Reads a single cell from the provided spreadsheet, using the 1-indexed row and column.
+ * @param {string} row  - Row index (1-indexed; not zero-index)
+ * @param {string} column  - Column index (1-indexed; not zero-index)
+ * @param {any[]} sheetName  - Name of the sheet to query the cell.
+ * @returns {string} The cell's value as a string.
+ */
+function readSingleCell(sheetName, row, column) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(sheetName);
+  const cellValue = sheet.getRange(row, column).getValue();
+  return String(cellValue);
+}
+
+/**
  * Verifies the origin chat id is authorized to perform actions.
  * @param {string} chatId  - Telegram chat ID that originated the request.
  */
 function authenticate(chatId) {
   if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
     // catches both null and undefined
-    DEBUG_MODE &&
-      writeToSheet([`Unauthorized user: ${chatId}`], LOG_SHEET);
+    DEBUG_MODE && writeToSheet([`Unauthorized user: ${chatId}`], LOG_SHEET);
     throw new Error(`Unauthorized user: ${chatId}`);
   }
   return String(chatId);
