@@ -15,7 +15,7 @@ const DEBUG_MODE = Boolean(
   SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY) === "true"
 );
 
-// Google Spreadsheets sheet names 
+// Google Spreadsheets sheet names
 const EXPENSES_SHEET = "EXPENSES";
 const LOG_SHEET = SCRIPT_PROPERTIES.getProperty(LOG_SHEET_KEY);
 
