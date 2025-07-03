@@ -58,6 +58,9 @@ function handleCommand(command, chatId) {
     sendMessage(chatId, help_command_message(), "MarkdownV2");
   } else if (command === "/month") {
     const month = MONTH_ZERO_INDEXED + 2; // +1 since G sheets are 1-indexed, + 1 for sheet headers
+    const [total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat] = readRowByIndex(MONTHLY_SUMMARY_SHEET, month, 3, 7);
+    const expense_summary = month_command_message(MONTH_NAME, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat);
+    sendMessage(chatId, expense_summary);
   } else {
     return;
   }

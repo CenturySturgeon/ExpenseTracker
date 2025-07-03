@@ -13,6 +13,26 @@ function message_expense_confirmation(name_or_description, amount, category) {
 📂 ${category}`;
 }
 
+
+/**
+ * Telegram confirmation message after an expense has been logged.
+ * @param {string} name_or_description Name/Description of the expense.
+ * @param {number} amount The amount spent.
+ * @param {string} category The category/subcategory line.
+ * @return {string} The formatted message the bot will reply with.
+ */
+function month_command_message(month_name, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat) {
+  return `📊 *${toTitleCase(month_name)} Expense Summary* 📊
+
+💰 *Total Spent:* $${Number(total_spent).toFixed(2)}
+
+📋 *Top Category:* ${top_category} $${Number(total_top_cat)}
+📌 *Top Subcategory:* ${top_subcategory} $${Number(total_top_subcat)}
+
+🌱 Little strokes fell great oaks 🌱`;
+}
+
+
 /**
  * Returns the Telegram message when initializing conversation with bot.
  * * @param {string} alias Username alias.

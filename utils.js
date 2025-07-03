@@ -18,6 +18,7 @@ function sendMessage(chatId, message, parseMode = "Markdown") {
   UrlFetchApp.fetch(url, payload);
 }
 
+
 /**
  * Writes a row, using the row array, to the provided sheet.
  * @param {string} row  - Array containing the cells to append to the sheet.
@@ -33,6 +34,27 @@ function writeToSheet(row, sheetName) {
   sheet.appendRow(row_with_timestamp);
 }
 
+
+/**
+ * Reads a single cell from the provided spreadsheet, using the 1-indexed row and column.
+ * @param {any[]} sheet_name  - Name of the sheet to query the cell.
+ * @param {string} row  - Row index (1-indexed; not zero-index)
+ * @param {string} start_column  - Column index to start the range (1-indexed; not zero-index)
+ * @param {string} end_column  - Inclusive column index to stop the range (1-indexed; not zero-index)
+ * @returns {any[]} An array of values for the givent range.
+ */
+function readRowByIndex(sheet_name, row, start_column, end_column) {
+  let ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(sheet_name);
+  var total_columns = end_column - start_column + 1;
+
+  var rowValues = sheet
+    .getRange(row, start_column, 1, total_columns) // The '1' determines the number of rows to include
+    .getValues(); // row index, column index, rows to include, total number of columns for the range
+  return rowValues[0]; // Return as a 1D array
+}
+
+
 /**
  * Reads a single cell from the provided spreadsheet, using the 1-indexed row and column.
  * @param {string} row  - Row index (1-indexed; not zero-index)
@@ -47,6 +69,7 @@ function readSingleCell(sheetName, row, column) {
   return String(cellValue);
 }
 
+
 /**
  * Verifies the origin chat id is authorized to perform actions.
  * @param {string} chatId  - Telegram chat ID that originated the request.
@@ -59,6 +82,7 @@ function authenticate(chatId) {
   }
   return String(chatId);
 }
+
 
 /**
  * Converts the provided string into title case.
@@ -73,11 +97,13 @@ function toTitleCase(str) {
     .join(" ");
 }
 
+
 // API Return Functions
 function respondOk(message = "Ok") {
   // For Telegram webhooks, 200 OK is best to prevent retries.
   return HtmlService.createHtmlOutput(message);
 }
+
 
 function respondJson(obj) {
   return HtmlService.createHtmlOutput(JSON.stringify(obj));

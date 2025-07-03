@@ -17,7 +17,9 @@ const DEBUG_MODE = Boolean(
 
 // Google Spreadsheets sheet names
 const EXPENSES_SHEET = "EXPENSES";
+const MONTHLY_SUMMARY_SHEET = "MONTHLY"
 const LOG_SHEET = SCRIPT_PROPERTIES.getProperty(LOG_SHEET_KEY);
 
 // Ohter constants
-MONTH_ZERO_INDEXED = new Date().getMonth();
+const MONTH_ZERO_INDEXED = new Date().getMonth();
+const MONTH_NAME = new Date().toLocaleString('en-US', { month: 'long' });
