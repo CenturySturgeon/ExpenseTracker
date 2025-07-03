@@ -6,10 +6,7 @@ function doPost(e) {
   try {
     update = JSON.parse(e.postData.contents);
     DEBUG_MODE &&
-      writeToSheet(
-        ["Received request: " + JSON.stringify(update)],
-        LOG_SHEET
-      );
+      writeToSheet(["Received request: " + JSON.stringify(update)], LOG_SHEET);
   } catch (error) {
     DEBUG_MODE &&
       writeToSheet(
@@ -22,8 +19,7 @@ function doPost(e) {
   // Extract the unique update_id
   const updateId = update.update_id;
   if (!updateId) {
-    DEBUG_MODE &&
-      writeToSheet(["No update_id found in payload."], LOG_SHEET);
+    DEBUG_MODE && writeToSheet(["No update_id found in payload."], LOG_SHEET);
     return respondOk("Error: No update_id provided");
   }
 
@@ -53,8 +49,7 @@ function doPost(e) {
     );
     handleUpdate(update, chat_id);
   } catch (error) {
-    DEBUG_MODE &&
-      writeToSheet(["Handling Error: " + error.message], LOG_SHEET);
+    DEBUG_MODE && writeToSheet(["Handling Error: " + error.message], LOG_SHEET);
     return respondOk("Error processing request: " + error.message);
   }
 

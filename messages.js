@@ -5,11 +5,7 @@
  * @param {string} category The category/subcategory line.
  * @return {string} The formatted message the bot will reply with.
  */
-function message_expense_confirmation(
-  name_or_description,
-  amount,
-  category
-) {
+function message_expense_confirmation(name_or_description, amount, category) {
   return `💸 Expense recorded 💸
 
 📝 *${name_or_description}*
@@ -22,11 +18,9 @@ function message_expense_confirmation(
  * * @param {string} alias Username alias.
  * @return {string} The formatted message the bot will reply with.
  */
-function start_command_message(
-  alias = ''
-) {
+function start_command_message(alias = "") {
   return `
-✨ Hi there${', ' + alias}! I'm your personal expense assistant ✨  
+✨ Hi there${", " + alias}! I'm your personal expense assistant ✨  
 
 Here's what I can help you with:  
 📌 Track daily expenses  
@@ -41,8 +35,7 @@ Type /help to see what I can do! 🔍
  * Returns the Telegram message when user prompts for help.
  * @return {string} The formatted message the bot will reply with.
  */
-function help_command_message(
-) {
+function help_command_message() {
   return `🛠 *Available Commands* 🛠
 
   🗓️ /month View a summary of your spending for the current month _\\(not available\\)_
