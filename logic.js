@@ -30,12 +30,12 @@ function handleExpenseEntry(text, chatId) {
     return;
   }
 
-  const name = toTitleCase(String(parts[0]));
-  const amount = extractNumber(parts[1].trim());
-  const category = toTitleCase(String(parts[2]));
+  const name = toTitleCase(cleanSpaces(String(parts[0])));
+  const amount = extractNumber(parts[1]);
+  const category = toTitleCase(cleanSpaces(String(parts[2])));
 
-  const subcategory = parts[3] ? toTitleCase(String(parts[3])) : null;
-  const description = parts[4] ? toTitleCase(String(parts[4])) : null;
+  const subcategory = parts[3] ? toTitleCase(cleanSpaces(String(parts[3]))) : null;
+  const description = parts[4] ? toTitleCase(cleanSpaces(String(parts[4]))) : null;
 
   writeToSheet(
     [name, amount, category, subcategory, description],

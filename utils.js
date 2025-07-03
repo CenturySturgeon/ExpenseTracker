@@ -59,7 +59,7 @@ function readRowByIndex(sheet_name, row, start_column, end_column) {
  * Reads a single cell from the provided spreadsheet, using the 1-indexed row and column.
  * @param {string} row  - Row index (1-indexed; not zero-index)
  * @param {string} column  - Column index (1-indexed; not zero-index)
- * @param {any[]} sheetName  - Name of the sheet to query the cell.
+ * @param {string} sheetName  - Name of the sheet to query the cell.
  * @returns {string} The cell's value as a string.
  */
 function readSingleCell(sheetName, row, column) {
@@ -67,6 +67,20 @@ function readSingleCell(sheetName, row, column) {
   const sheet = ss.getSheetByName(sheetName);
   const cellValue = sheet.getRange(row, column).getValue();
   return String(cellValue);
+}
+
+
+/**
+ * Reads all data from the provided sheet.
+ * @param {string} sheetName  - Name of the sheet to query for data.
+ * @returns {any[]} The found data.
+ */
+function readDataFromSheet(sheetName) {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(sheetName); // Replace with your actual sheet name
+  var dataRange = sheet.getDataRange(); // Get the range that contains data
+  var values = dataRange.getValues(); // Get the values from that range
+  return values;
 }
 
 
@@ -82,6 +96,7 @@ function authenticate(chatId) {
   }
   return String(chatId);
 }
+
 
 /**
  * Extracts the first number from a given string and converts it to a number type.
@@ -101,6 +116,23 @@ function extractNumber(str) {
   return Number(match[0]);
 }
 
+
+/**
+ * Cleans up a string by removing leading and trailing whitespace
+ * and replacing multiple internal spaces with a single space.
+ *
+ * @param {string} str - The input string to clean.
+ * @returns {string} A cleaned string with trimmed edges and normalized spacing.
+ *
+ * @example
+ * cleanSpaces("   Hello    World   "); // "Hello World"
+ * cleanSpaces("This     is   a   test"); // "This is a test"
+ */
+function cleanSpaces(str) {
+  return str
+    .replace(/^\s+|\s+$/g, '')   // Trim leading and trailing whitespace
+    .replace(/\s{2,}/g, ' ');    // Replace two or more spaces with a single space
+}
 
 
 /**
