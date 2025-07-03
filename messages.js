@@ -24,7 +24,7 @@ function message_expense_confirmation(name_or_description, amount, category) {
 function month_command_message(month_name, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat) {
   return `📊 *${toTitleCase(month_name)} Expense Summary* 📊
 
-💰 *Total Spent:* $${Number(total_spent).toFixed(2)}
+💸 *Total Spent:* $${Number(total_spent).toFixed(2)}
 
 📋 *Top Category:* ${top_category} $${Number(total_top_cat)}
 📌 *Top Subcategory:* ${top_subcategory} $${Number(total_top_subcat)}
@@ -58,7 +58,7 @@ Type /help to see what I can do! 🔍
 function help_command_message() {
   return `🛠 *Available Commands* 🛠
 
-  🗓️ /month View a summary of your spending for the current month _\\(not available\\)_
+  📅 /month View a summary of your spending for the current month
 
   🐷 /budget Check your budget alignment for the month and year _\\(not available\\)_
 

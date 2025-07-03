@@ -31,7 +31,7 @@ function handleExpenseEntry(text, chatId) {
   }
 
   const name = toTitleCase(String(parts[0]));
-  const amount = Number(String(parts[1].trim()));
+  const amount = extractNumber(parts[1].trim());
   const category = toTitleCase(String(parts[2]));
 
   const subcategory = parts[3] ? toTitleCase(String(parts[3])) : null;

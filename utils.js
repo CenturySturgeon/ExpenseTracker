@@ -83,6 +83,25 @@ function authenticate(chatId) {
   return String(chatId);
 }
 
+/**
+ * Extracts the first number from a given string and converts it to a number type.
+ *
+ * Supports integers, decimal numbers, and negative values.
+ * Throws an error if no numeric value is found in the input string.
+ *
+ * @param {string} str - The input string containing a number.
+ * @returns {number} The extracted numeric value.
+ * @throws {Error} If no number is found in the string.
+ */
+function extractNumber(str) {
+  const match = str.match(/-?\d+(\.\d+)?/); // matches integers and decimals, including negative numbers
+  if (!match) {
+    throw new Error("No number found in the string");
+  }
+  return Number(match[0]);
+}
+
+
 
 /**
  * Converts the provided string into title case.
