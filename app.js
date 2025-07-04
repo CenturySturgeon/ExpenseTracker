@@ -23,9 +23,8 @@ function doPost(e) {
     return respondOk("Error: No update_id provided");
   }
 
-  const scriptProperties = PropertiesService.getScriptProperties();
   const lastProcessedUpdateId =
-    scriptProperties.getProperty(LAST_UPDATE_ID_KEY);
+    SCRIPT_PROPERTIES.getProperty(LAST_UPDATE_ID_KEY);
 
   // Check for duplicates
   if (
@@ -56,7 +55,7 @@ function doPost(e) {
   // After successfully writing, store the new lastProcessedUpdateId
   try {
     !DEBUG_MODE &&
-      scriptProperties.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
+      SCRIPT_PROPERTIES.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
 
     DEBUG_MODE && writeToSheet(["Successful Run"], LOG_SHEET);
     return respondOk();

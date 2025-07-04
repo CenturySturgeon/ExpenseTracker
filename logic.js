@@ -30,11 +30,18 @@ function handleExpenseEntry(text, chatId) {
     return;
   }
 
-  const name = toTitleCase(cleanSpaces(String(parts[0])));
+  const name = toTitleCase(cleanSpaces(removeEmojis(String(parts[0]))));
   const amount = extractNumber(parts[1]);
-  const category = toTitleCase(cleanSpaces(String(parts[2])));
 
-  const subcategory = parts[3] ? toTitleCase(cleanSpaces(String(parts[3]))) : null;
+  const category = toTitleCase(cleanSpaces(removeEmojis(String(parts[2]))));
+  const category_emojis = extractEmojis(String(parts[2]));
+  if (category_emojis){
+    // Emoji in category, assign it to the emoji map
+    CATEGORY_EMOJIS_MAP[category] = category_emojis[0];
+    SCRIPT_PROPERTIES.setProperty(CATEGORY_EMOJIS_KEY, JSON.stringify(CATEGORY_EMOJIS_MAP));
+  }
+
+  const subcategory = parts[3] ? toTitleCase(cleanSpaces(removeEmojis(String(parts[3])))) : null;
   const description = parts[4] ? toTitleCase(cleanSpaces(String(parts[4]))) : null;
 
   writeToSheet(

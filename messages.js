@@ -56,15 +56,19 @@ Type /help to see what I can do! 🔍
  * @return {string} The formatted message the bot will reply with.
  */
 function help_command_message() {
-  return `🧰 *Available Commands* 🧰
+  return `    🧰 *Available Commands* 🧰
 
-  📅 /month View a summary of your spending for the current month
+  📅  /month View a summary of your spending for the current month
 
-  🐷 /budget Check your budget alignment for the month and year _\\(not available\\)_
+  🗂️  /cats Get a list of all your logged categories
 
-  🗂️ /cats Get a list of all your logged categories
+  ⚖️  /budget Check your budget alignment for the month and year _\\(not available\\)_
 
-  ℹ️ /help Show this list of commands
+  📊  /stocks Gets a summary of the tracked stocks _\\(not available\\)_
+
+  🏛️  /invest Gets a summary of your investment portfolio _\\(not available\\)_
+
+  ℹ️  /help Show this list of commands
 
 
 💸 *Submitting an Expense* 💸
@@ -78,8 +82,9 @@ Send me a message with the following fields separated by commas:
   • Description _\\(optional\\)_
 
 *Example:*  
-Apples, 50, Food, Groceries, Green apples
+Apples, $50, Food 🍗, Groceries, Green apples
 
+_Emojis on the category field will be assigned as the category emoji_
 
 More features coming soon\\! 💹
 `;

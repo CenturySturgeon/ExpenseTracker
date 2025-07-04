@@ -185,6 +185,30 @@ function cleanSpaces(str) {
 
 
 /**
+ * Extracts all individual emoji characters from a given string.
+ *
+ * @param {string} str - The input string to extract emojis from.
+ * @returns {string[]} Null or an array of emoji characters found in the string.
+ */
+function extractEmojis(str) {
+  const emojiRegex = /\p{Emoji}/gu;
+  return str.match(emojiRegex) || [];
+}
+
+
+/**
+ * Removes all emoji characters from a given string.
+ *
+ * @param {string} str - The input string to process.
+ * @returns {string} The input string with all emojis removed.
+ */
+function removeEmojis(str) {
+  const emojiRegex = /\p{Emoji}/gu;
+  return str.replace(emojiRegex, '');
+}
+
+
+/**
  * Converts the provided string into title case.
  * @param {string} str  - The string to convert.
  * @returns {number} The string argument in title case.

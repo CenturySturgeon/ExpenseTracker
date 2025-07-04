@@ -130,3 +130,10 @@ https://api.telegram.org/bot<TELEGRAM_TOKEN>/deleteWebhook
 # Get webhook
 https://api.telegram.org/bot<TELEGRAM_TOKEN>/getWebhookInfo
 ```
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Hello from curl!", "time":"2025-07-04T12:00:00Z"}' \
+  "https://script.google.com/macros/s/your-script-id/exec"
+```
