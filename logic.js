@@ -54,14 +54,15 @@ function handleCommand(command, chatId) {
   if (command === "/start") {
     alias = chatId in CHAT_TO_USER ? CHAT_TO_USER[chatId] : "";
     sendMessage(chatId, start_command_message(alias));
-  } else if (command === "/help") {
-    sendMessage(chatId, help_command_message(), "MarkdownV2");
+  } else if (command === "/cats") {
+    sendMessage(chatId, categories_list_message());
   } else if (command === "/month") {
     const month = MONTH_ZERO_INDEXED + 2; // +1 since G sheets are 1-indexed, + 1 for sheet headers
     const [total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat] = readRowByIndex(MONTHLY_SUMMARY_SHEET, month, 3, 7);
     const expense_summary = month_command_message(MONTH_NAME, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat);
     sendMessage(chatId, expense_summary);
   } else {
-    return;
+    // If command's not found send help (default behavior for /help as well)
+    sendMessage(chatId, help_command_message(), "MarkdownV2");
   }
 }

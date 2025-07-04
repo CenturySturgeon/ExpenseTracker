@@ -1,25 +1,4 @@
 /**
- * Sends a message to a user via a Telegram bot.
- * @param {string} chatId Chat/User who'll receive the message.
- * @param {string} message Message that will be sent.
- */
-function sendMessage(chatId, message, parseMode = "Markdown") {
-  const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-  const payload = {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify({
-      chat_id: chatId,
-      text: message,
-      parse_mode: parseMode,
-    }),
-  };
-
-  UrlFetchApp.fetch(url, payload);
-}
-
-
-/**
  * Writes a row, using the row array, to the provided sheet.
  * @param {string} row  - Array containing the cells to append to the sheet.
  * @param {any[]} sheetName  - Name of the sheet where the row will be added.
@@ -81,6 +60,76 @@ function readDataFromSheet(sheetName) {
   var dataRange = sheet.getDataRange(); // Get the range that contains data
   var values = dataRange.getValues(); // Get the values from that range
   return values;
+}
+
+/**
+ * Maps categories to their respective subcategories from a 2D array.
+ *
+ * The first row of the input data is assumed to contain category names.
+ * Each subsequent row contains subcategories aligned by column to their respective categories.
+ * Empty strings and "#N/A" values are ignored in subcategories.
+ *
+ * @param {string[][]} data - A 2D array where the first row contains category names and subsequent rows contain subcategories.
+ * @returns {Object} An object mapping each non-empty category to an array of its valid subcategories.
+ */
+function mapCategoriesToSubcategories(data) {
+  const result = {};
+  const categories = data[0];
+
+  for (let col = 0; col < categories.length; col++) {
+    const category = categories[col];
+
+    if (!category) continue;
+    const subcategories = [];
+
+    for (let row = 1; row < data.length; row++) {
+      const sub = data[row][col];
+      if (sub && sub !== "#N/A") {
+        subcategories.push(sub);
+      }
+    }
+
+    // Only include if there's at least one subcategory
+    if (subcategories.length) {
+      result[category] = subcategories;
+    } else {
+      result[category] = [];
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Returns the keys of an object sorted in alphabetical order.
+ *
+ * @param {Object} obj - The object whose keys are to be retrieved and sorted.
+ * @returns {string[]} An array of the object's keys sorted alphabetically.
+ */
+function getObjectSortedKeys(obj) {
+  const sortedKeys = Object.keys(obj).sort(); // Sort the keys alphabetically
+  return sortedKeys;
+}
+
+
+/**
+ * Sends a message to a user via a Telegram bot.
+ * @param {string} chatId Chat/User who'll receive the message.
+ * @param {string} message Message that will be sent.
+ */
+function sendMessage(chatId, message, parseMode = "Markdown") {
+  const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+  const payload = {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify({
+      chat_id: chatId,
+      text: message,
+      parse_mode: parseMode,
+    }),
+  };
+
+  UrlFetchApp.fetch(url, payload);
 }
 
 

@@ -56,13 +56,13 @@ Type /help to see what I can do! 🔍
  * @return {string} The formatted message the bot will reply with.
  */
 function help_command_message() {
-  return `🛠 *Available Commands* 🛠
+  return `🧰 *Available Commands* 🧰
 
   📅 /month View a summary of your spending for the current month
 
   🐷 /budget Check your budget alignment for the month and year _\\(not available\\)_
 
-  🗂️ /cats Get a list of all your logged categories _\\(not available\\)_
+  🗂️ /cats Get a list of all your logged categories
 
   ℹ️ /help Show this list of commands
 
@@ -83,4 +83,33 @@ Apples, 50, Food, Groceries, Green apples
 
 More features coming soon\\! 💹
 `;
+}
+
+/**
+ * Telegram message listing the user's expense categories and subcategories.
+ * @param {Object} categories An object where keys are category names and values are arrays of subcategory names.
+ * @return {string} The formatted message the bot will reply with.
+ */
+function categories_list_message() {
+  const categories = mapCategoriesToSubcategories(readDataFromSheet(CATEGORIES_SHEET));
+  const sorted_cat_obj_keys = getObjectSortedKeys(categories);
+
+  let message = `🗂️ *Your Expense Categories & Subcategories* 🗂️\n\n`;
+
+  for (const category of sorted_cat_obj_keys) {
+    category_emoji = category in CATEGORY_EMOJIS_MAP ? ' '+ CATEGORY_EMOJIS_MAP[category] + ' ' : '';
+    message += category_emoji + `*${category}*` + '\n';
+    const subcategories = categories[category]
+    if (subcategories.length > 0) {
+      for (const sub of subcategories) {
+        message += `  • ${sub}\n`;
+      }
+    } else {
+      message += `  • _No subcategories_\n`;
+    }
+    message += `\n`;
+  }
+
+  message += `Use these as a reference anytime you're logging expenses! 📌`;
+  return message;
 }
