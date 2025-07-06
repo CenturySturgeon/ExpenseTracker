@@ -3,6 +3,7 @@
  * @param {string} name_or_description Name/Description of the expense.
  * @param {number} amount The amount spent.
  * @param {string} category The category/subcategory line.
+ * 
  * @return {string} The formatted message the bot will reply with.
  */
 function message_expense_confirmation(name_or_description, amount, category) {
@@ -16,9 +17,13 @@ function message_expense_confirmation(name_or_description, amount, category) {
 
 /**
  * Telegram confirmation message after an expense has been logged.
- * @param {string} name_or_description Name/Description of the expense.
- * @param {number} amount The amount spent.
- * @param {string} category The category/subcategory line.
+ * @param {string} month_name Name of the month that's being queried.
+ * @param {number} total_spent The amount spent during the month.
+ * @param {string} top_category The category where the most amount of money was spent.
+ * @param {number} total_top_cat The amount spent for top_category.
+ * @param {string} top_subcategory The top category's subcategory where the most amount of money was spent.
+ * @param {number} total_top_subcat The amount spent for top_subcategory.
+ * 
  * @return {string} The formatted message the bot will reply with.
  */
 function month_command_message(month_name, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat) {
@@ -75,14 +80,13 @@ function help_command_message() {
 
 Send me a message with the following fields separated by commas:
 
-  • *Expense Name*
   • *Amount*
   • *Category*
   • Subcategory _\\(optional\\)_
   • Description _\\(optional\\)_
 
 *Example:*  
-Apples, $50, Food 🍗, Groceries, Green apples
+$50, Food 🍗, Groceries, Green apples
 
 _Emojis on the category field will be assigned as the category emoji_
 

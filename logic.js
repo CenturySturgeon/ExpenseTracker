@@ -21,36 +21,36 @@ function handleUpdate(update, chatId) {
 
 function handleExpenseEntry(text, chatId) {
   const parts = text.split(",");
-  if (parts.length < 3) {
+  if (parts.length < 2) {
     DEBUG_MODE && writeToSheet(["Not enough args"], LOG_SHEET);
     sendMessage(
       chatId,
-      "Please use the format: name, amount, category, subcategory (optional), description (optional)"
+      "Please use the format: amount, category, subcategory (optional), description (optional)"
     );
     return;
   }
 
   const name = toTitleCase(cleanSpaces(removeEmojis(String(parts[0]))));
-  const amount = extractNumber(parts[1]);
+  const amount = extractNumber(parts[0]);
 
-  const category = toTitleCase(cleanSpaces(removeEmojis(String(parts[2]))));
-  const category_emojis = extractEmojis(String(parts[2]));
+  const category = toTitleCase(cleanSpaces(removeEmojis(String(parts[1]))));
+  const category_emojis = extractEmojis(String(parts[1]));
   if (category_emojis){
     // Emoji in category, assign it to the emoji map
     CATEGORY_EMOJIS_MAP[category] = category_emojis[0];
     SCRIPT_PROPERTIES.setProperty(CATEGORY_EMOJIS_KEY, JSON.stringify(CATEGORY_EMOJIS_MAP));
   }
 
-  const subcategory = parts[3] ? toTitleCase(cleanSpaces(removeEmojis(String(parts[3])))) : null;
-  const description = parts[4] ? toTitleCase(cleanSpaces(String(parts[4]))) : null;
+  const subcategory = parts[3] ? toTitleCase(cleanSpaces(removeEmojis(String(parts[2])))) : null;
+  const description = parts[4] ? toTitleCase(cleanSpaces(String(parts[3]))) : null;
 
   writeToSheet(
-    [name, amount, category, subcategory, description],
+    [amount, category, subcategory, description],
     EXPENSES_SHEET
   );
 
   const catLine = subcategory ? `${category} / ${subcategory}` : category;
-  const descLine = description || name;
+  const descLine = description || subcategory || category;
 
   sendMessage(chatId, message_expense_confirmation(descLine, amount, catLine));
 }
