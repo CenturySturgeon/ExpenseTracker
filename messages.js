@@ -111,10 +111,10 @@ function categories_list_message() {
     const subcategories = categories[category]
     if (subcategories.length > 0) {
       for (const sub of subcategories) {
-        message += `  • ${sub}\n`;
+        message += `       • ${sub}\n`;
       }
     } else {
-      message += `  • _No subcategories_\n`;
+      message += `       • _No subcategories_\n`;
     }
     message += `\n`;
   }
