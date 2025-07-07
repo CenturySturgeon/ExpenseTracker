@@ -2,19 +2,14 @@ function handleUpdate(update, chatId) {
   const message = update.message;
   const messageText = message ? message.text : "N/A";
   if (chatId == null || messageText === "N/A") {
-    DEBUG_MODE && writeToSheet(["Error handling update"], LOG_SHEET);
+    debugLog("Error handling update");
     return;
   }
   if (messageText.startsWith("/")) {
-    DEBUG_MODE &&
-      writeToSheet(
-        ["Successfully handling command: " + messageText],
-        LOG_SHEET
-      );
+    debugLog("Successfully handling command: " + messageText);
     handleCommand(messageText, chatId);
   } else {
-    DEBUG_MODE &&
-      writeToSheet(["About to handle expenses: " + messageText], LOG_SHEET);
+    debugLog("About to handle expenses: " + messageText);
     handleExpenseEntry(messageText, chatId);
   }
 }
@@ -22,7 +17,7 @@ function handleUpdate(update, chatId) {
 function handleExpenseEntry(text, chatId) {
   const parts = text.split(",");
   if (parts.length < 2) {
-    DEBUG_MODE && writeToSheet(["Not enough args"], LOG_SHEET);
+    debugLog("Not enough args");
     sendMessage(
       chatId,
       "Please use the format: amount, category, subcategory (optional), description (optional)"
@@ -55,7 +50,7 @@ function handleExpenseEntry(text, chatId) {
 }
 
 function handleCommand(command, chatId) {
-  DEBUG_MODE && writeToSheet(["Sent message"], LOG_SHEET);
+  debugLog("Sent message");
 
   if (command === "/start") {
     alias = chatId in CHAT_TO_USER ? CHAT_TO_USER[chatId] : "";

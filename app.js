@@ -5,21 +5,16 @@ function doPost(e) {
   let update;
   try {
     update = JSON.parse(e.postData.contents);
-    DEBUG_MODE &&
-      writeToSheet(["Received request: " + JSON.stringify(update)], LOG_SHEET);
+    debugLog("Received request: " + JSON.stringify(update));
   } catch (error) {
-    DEBUG_MODE &&
-      writeToSheet(
-        ["Error parsing Telegram update: " + error.message],
-        LOG_SHEET
-      );
+    debugLog("Error parsing Telegram update: " + error.message);
     return respondOk("Error: Invalid JSON payload");
   }
 
   // Extract the unique update_id
   const updateId = update.update_id;
   if (!updateId) {
-    DEBUG_MODE && writeToSheet(["No update_id found in payload."], LOG_SHEET);
+    debugLog("No update_id found in payload.");
     return respondOk("Error: No update_id provided");
   }
 
@@ -48,7 +43,7 @@ function doPost(e) {
     );
     handleUpdate(update, chat_id);
   } catch (error) {
-    DEBUG_MODE && writeToSheet(["Handling Error: " + error.message], LOG_SHEET);
+    debugLog("Handling Error: " + error.message);
     return respondOk("Error processing request: " + error.message);
   }
 
@@ -57,14 +52,10 @@ function doPost(e) {
     !DEBUG_MODE &&
       SCRIPT_PROPERTIES.setProperty(LAST_UPDATE_ID_KEY, String(updateId));
 
-    DEBUG_MODE && writeToSheet(["Successful Run"], LOG_SHEET);
+    debugLog("Successful Run");
     return respondOk();
   } catch (error) {
-    DEBUG_MODE &&
-      writeToSheet(
-        ["Error processing webhook or writing to sheet: " + error.message],
-        LOG_SHEET
-      );
+    debugLog("Error processing webhook or writing to sheet: " + error.message);
     return respondOk("Error processing request: " + error.message);
   }
 }

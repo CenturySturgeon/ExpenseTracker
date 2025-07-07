@@ -10,7 +10,7 @@ function message_expense_confirmation(name_or_description, amount, category) {
   return `💸 Expense recorded 💸
 
 📝 *${name_or_description}*
-💰 $${amount.toFixed(2)}
+💰 ${currency_format(amount)}
 📂 ${category}`;
 }
 
@@ -29,10 +29,10 @@ function message_expense_confirmation(name_or_description, amount, category) {
 function month_command_message(month_name, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat) {
   return `📊 *${toTitleCase(month_name)} Expense Summary* 📊
 
-💸 *Total Spent:* $${Number(total_spent).toFixed(2)}
+💸 *Total Spent:* ${currency_format(total_spent)}
 
-📋 *Top Category:* ${top_category} $${Number(total_top_cat)}
-📌 *Top Subcategory:* ${top_subcategory} $${Number(total_top_subcat)}
+📋 *Top Category:* ${top_category} ${currency_format(total_top_cat)}
+📌 *Top Subcategory:* ${top_subcategory} ${currency_format(total_top_subcat)}
 
 🌱 Little strokes fell great oaks 🌱`;
 }
