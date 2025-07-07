@@ -1,6 +1,6 @@
 // PropertiesService (env) Keys
 const TELEGRAM_TOKEN_KEY = "telegramToken";
-const SPREADSHEET_ID_KEY = "spreadsheetId";
+const SPREADSHEET_IDS_KEY = "spreadsheetIds";
 const CHAT_MAP_KEY = "chatMap"; // JSON string object {<Chat Id>: <User Alias>}
 const DEBUG_MODE_KEY = "debugMode";
 const LAST_UPDATE_ID_KEY = "lastProcessedUpdateId";
@@ -11,7 +11,7 @@ const SPREADHSHEED_MAP_KEY = "spreadsheetNames"
 // PropertiesService (env) Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
 const TELEGRAM_TOKEN = SCRIPT_PROPERTIES.getProperty(TELEGRAM_TOKEN_KEY);
-const SPREADSHEET_ID = SCRIPT_PROPERTIES.getProperty(SPREADSHEET_ID_KEY);
+const SPREADSHEET_ID_MAP = JSON.parse(SCRIPT_PROPERTIES.getProperty(SPREADSHEET_IDS_KEY)); // {"edit_sheet":"edit_sheet_id","read_only_sheet":"read_only_sheet_id"}
 const CHAT_TO_USER = JSON.parse(SCRIPT_PROPERTIES.getProperty(CHAT_MAP_KEY));
 const DEBUG_MODE = Boolean(
   SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY) === "true"
