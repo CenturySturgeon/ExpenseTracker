@@ -122,20 +122,18 @@ function handleExpenseEntry(text, chatId) {
 
 ```
 # Set webhook
-https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook?url=<WEB_APP_URL>
-
-# Set webook with secret token
-https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook?url=<WEB_APP_URL>&secret_token=your_super_secret_token
-
-- Example:
-https://api.telegram.org/bot<your-bot-token>/setWebhook?url=https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT/exec&secret_token=your_super_secret_token
+curl -X POST https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook \
+     -H "Content-Type: application/json" \
+     -d '{
+          "url": "https://script.google.com/macros/s/YOUR_DEPLOY_ID/exec?token=<YOUR_SECRET_TOKEN>"
+        }'
 
 
 # Delete webhook
-https://api.telegram.org/bot<TELEGRAM_TOKEN>/deleteWebhook
+curl https://api.telegram.org/bot<BOT_TOKEN_HERE>/deleteWebhook
 
 # Get webhook
-https://api.telegram.org/bot<TELEGRAM_TOKEN>/getWebhookInfo
+curl https://api.telegram.org/bot<TELEGRAM_TOKEN>/getWebhookInfo
 ```
 
 ```bash
