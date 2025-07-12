@@ -136,11 +136,11 @@ curl https://api.telegram.org/bot<BOT_TOKEN_HERE>/deleteWebhook
 curl https://api.telegram.org/bot<TELEGRAM_TOKEN>/getWebhookInfo
 ```
 
-```bash
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Hello from curl!", "time":"2025-07-04T12:00:00Z"}' \
-  "https://script.google.com/macros/s/your-script-id/exec"
-```
-
 https://developers.google.com/apps-script/guides/clasp
+
+
+# Force to copy gooogle sheet by link
+https://docs.google.com/spreadsheets/d/<SHEET_ID>/copy
+
+## Example
+https://docs.google.com/spreadsheets/d/1aBcD1234EFgHIjkLmNOpQrStUvWxYz/copy
