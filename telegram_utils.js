@@ -23,13 +23,17 @@ function sendMessage(chatId, message, parseMode = "Markdown") {
  * Verifies the origin chat id is authorized to perform actions.
  * @param {string} chatId  - Telegram chat ID that originated the request.
  */
-function authenticate(chatId) {
+function authenticate(chatId, requestToken) {
   if (chatId == null || !(String(chatId) in CHAT_TO_USER)) {
-    // catches both null and undefined
-    debugLog(`Unauthorized user: ${chatId}`);
-    throw new Error(`Unauthorized user: ${chatId}`);
+    // catches bad requestToken
+    if (requestToken != SECRET_TOKEN) {
+      debugLog(`Not allowed`);
+      throw new Error(`Not allowed`);
+    }
+    // catches both null and undefined chatId
+    debugLog(`Unauthorized telegram user: ${chatId}`);
+    throw new Error(`Unauthorized telegram user: ${chatId}`);
   }
-  return String(chatId);
 }
 
 

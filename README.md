@@ -142,3 +142,5 @@ curl -X POST \
   -d '{"message":"Hello from curl!", "time":"2025-07-04T12:00:00Z"}' \
   "https://script.google.com/macros/s/your-script-id/exec"
 ```
+
+https://developers.google.com/apps-script/guides/clasp

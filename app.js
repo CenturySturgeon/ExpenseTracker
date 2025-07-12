@@ -3,8 +3,10 @@ function doPost(e) {
 
   // Parse the incoming Telegram update
   let update;
+  let secretToken;
   try {
     update = JSON.parse(e.postData.contents);
+    secretToken = e?.parameters?.token;;
     debugLog("Received request: " + JSON.stringify(update));
   } catch (error) {
     debugLog("Error parsing Telegram update: " + error.message);
@@ -39,9 +41,10 @@ function doPost(e) {
 
   try {
     const chat_id = authenticate(
-      update.message ? update.message.chat.id : null
+      update.message ? update.message.chat.id : null,
+
     );
-    handleUpdate(update, chat_id);
+    handleUpdate(update, String(update.message.chat.id));
   } catch (error) {
     debugLog("Handling Error: " + error.message);
     return respondOk("Error processing request: " + error.message);

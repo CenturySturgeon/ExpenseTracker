@@ -6,7 +6,8 @@ const DEBUG_MODE_KEY = "debugMode";
 const LAST_UPDATE_ID_KEY = "lastProcessedUpdateId";
 const LOG_SHEET_KEY = "logSheetName";
 const CATEGORY_EMOJIS_KEY = "categoryEmojis";
-const SPREADHSHEED_MAP_KEY = "spreadsheetNames"
+const SPREADHSHEED_MAP_KEY = "readSpreadsheetNames";
+const SECRET_TOKEN_KEY = 'secretToken';
 
 // PropertiesService (env) Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
@@ -17,6 +18,7 @@ const DEBUG_MODE = Boolean(
   SCRIPT_PROPERTIES.getProperty(DEBUG_MODE_KEY) === "true"
 );
 const CATEGORY_EMOJIS_MAP = JSON.parse(SCRIPT_PROPERTIES.getProperty(CATEGORY_EMOJIS_KEY));
+const SECRET_TOKEN = SCRIPT_PROPERTIES.getProperty(SECRET_TOKEN_KEY);
 
 // Google Spreadsheets sheet names
 let SHEET_ALIAS_TO_NAME_MAP = JSON.parse(SCRIPT_PROPERTIES.getProperty(SPREADHSHEED_MAP_KEY));
