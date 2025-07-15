@@ -2,8 +2,10 @@
  * Sends a message to a user via a Telegram bot.
  * @param {string} chatId Chat/User who'll receive the message.
  * @param {string} message Message that will be sent.
+ * @param {boolean} silent Wether or not the message will trigger a notification on the user, false by default.
+ * @param {string} parseMode Determines the format for rendering of a message, can be either Markdown or MarkdownV2.
  */
-function sendMessage(chatId, message, parseMode = "Markdown") {
+function sendMessage(chatId, message, silent = true, parseMode = "Markdown") {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
   const payload = {
     method: "post",
@@ -12,6 +14,7 @@ function sendMessage(chatId, message, parseMode = "Markdown") {
       chat_id: chatId,
       text: message,
       parse_mode: parseMode,
+      disable_notification: silent,
     }),
   };
 
