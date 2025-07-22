@@ -67,9 +67,9 @@ function help_command_message() {
 
   🗂️  /cats Get a list of all your logged categories
 
-  ⚖️  /budget Check your budget alignment for the month and year _\\(not available\\)_
+  📊  /stocks Gets a summary of your tracked stocks
 
-  📊  /stocks Gets a summary of the tracked stocks _\\(not available\\)_
+  ⚖️  /budget Check your budget alignment for the month and year _\\(not available\\)_
 
   🏛️  /invest Gets a summary of your investment portfolio _\\(not available\\)_
 
@@ -121,4 +121,26 @@ function categories_list_message() {
 
   message += `Use these as a reference anytime you're logging expenses! 📌`;
   return message;
+}
+
+
+function stock_summary_message(title, currencies, stocks, phrase = false) {
+  const lines = [title];
+  let currencies_block = '';
+  for (const currency of currencies){
+    currencies_block += `  ${currency.display_str}\n`
+  }
+  lines.push(currencies_block);
+
+  // Determine padding values based on the longest name and change
+  const namePad = Math.max(...stocks.map(s => s.stock_name.length));
+  const changePad = Math.max(...stocks.map(s => s.getFormattedChange().length));
+
+  // Monospaced block
+  for (const stock of stocks) {
+    lines.push(`<code class="monospace-text">` + stock.toDisplayLine(namePad, changePad) + `</code>`);
+  }
+
+  phrase && lines.push('\n🌷 Courage is not the towering oak that sees storms come and go; it is the fragile blossom that opens in the snow. 🌷');
+  return lines.join('\n');
 }

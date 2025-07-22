@@ -80,8 +80,8 @@ function readSingleCell(sheetName, row, column) {
  * @param {string} sheetName  - Name of the sheet to query for data.
  * @returns {any[]} The found data.
  */
-function readDataFromSheet(sheetName) {
-  var ss = SpreadsheetApp.openById(SPREADSHEET_ID_MAP["read_only_sheet"]);
+function readDataFromSheet(sheetName, document = "read_only_sheet") {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID_MAP[document]);
   var sheet = ss.getSheetByName(sheetName); // Replace with your actual sheet name
   var dataRange = sheet.getDataRange(); // Get the range that contains data
   var values = dataRange.getValues(); // Get the values from that range
