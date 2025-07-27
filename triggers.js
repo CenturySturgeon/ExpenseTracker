@@ -1,5 +1,5 @@
 function daily(){
-    send_daily_stock_summary_message(Object.keys(CHAT_TO_USER)[0],title = "<b>📬    📰  Daily Pre-Market Overview  📰    📬</b>\n", true);
+    send_daily_stock_summary_message(Object.keys(CHAT_TO_USER)[0],title = "<b>📫    📰  Daily Pre-Market Overview  📰    📫</b>\n", true);
 }
 
 function send_daily_stock_summary_message(chatId, title, phrase = false){

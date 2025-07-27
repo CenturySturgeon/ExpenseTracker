@@ -42,7 +42,7 @@ function cleanSpaces(str) {
  */
 function extractEmojis(str) {
   const emojiRegex = /\p{Emoji}/gu;
-  return str.match(emojiRegex) || [];
+  return str.match(emojiRegex) || null;
 }
 
 
