@@ -41,7 +41,7 @@ function writeExpense(row, sheetName) {
 
 
 /**
- * Reads a single cell from the provided spreadsheet, using the 1-indexed row and column.
+ * Reads a single row from the provided spreadsheet, using the 1-indexed row and column.
  * @param {any[]} sheet_name  - Name of the sheet to query the cell.
  * @param {string} row  - Row index (1-indexed; not zero-index)
  * @param {string} start_column  - Column index to start the range (1-indexed; not zero-index)

@@ -54,3 +54,51 @@ class Stock {
     return `    ${dirIcon} ${name}: ${change} ${statusIcon}`;
   }
 }
+
+
+class Category {
+    constructor(name, emoji = null) {
+        this.name = name;
+        this.emoji = emoji || null; // Use provided emoji or default to null
+        this.total_spent = 0;
+        // Map for subcategories for efficient lookup by name
+        // This will store other Category objects
+        this._subcategories = new Map();
+    }
+
+    /**
+     * Adds an amount to the total_spent for this category.
+     * @param {number} amount
+     */
+    addAmount(amount) {
+        if (typeof amount === 'number') {
+            this.total_spent += amount;
+        }
+    }
+
+    /**
+     * Gets or creates a subcategory.
+     * @param {string} subcategoryName
+     * @returns {Category} The subcategory object.
+     */
+    getOrCreateSubcategory(subcategoryName) {
+        if (!this._subcategories.has(subcategoryName)) {
+            // Subcategories usually don't have their own specific emojis unless defined
+            this._subcategories.set(subcategoryName, new Category(subcategoryName));
+        }
+        return this._subcategories.get(subcategoryName);
+    }
+
+    /**
+     * Returns the subcategories as a list (array) of Category objects.
+     * This is useful for iteration or display.
+     * @returns {Array<Category>}
+     */
+    get subcategories() {
+        return Array.from(this._subcategories.values());
+    }
+
+    get subcategoriesMap() {
+        return this._subcategories;
+    }
+}

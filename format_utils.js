@@ -140,3 +140,40 @@ function currency_format(amount) {
     maximumFractionDigits: 2,
   }).format(amount);
 }
+
+
+/**
+ * Transforms a list of expense arrays into a hierarchical map of Category objects.
+ * @param {Array<Array<string | number>>} expenses - A list of lists, where each inner list is [month_name, category, subcategory, amount].
+ * @returns {Map<string, Category>} A Map where keys are main category names and values are Category objects.
+ */
+function transformExpensesToCategoriesMap(expenses) {
+    const categoriesMap = new Map();
+
+    expenses.forEach(expense => {
+        const [, categoryName, subcategoryName, amount] = expense;
+
+        // Ensure the amount is a number for calculations
+        const parsedAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+        if (isNaN(parsedAmount)) {
+            return; // Skip this expense if amount is not a valid number
+        }
+
+        // 1. Handle the Main Category
+        if (!categoriesMap.has(categoryName)) {
+            // Create a new main category if it doesn't exist
+            const emoji = CATEGORY_EMOJIS_MAP[categoryName] || null; // Assign emoji
+            categoriesMap.set(categoryName, new Category(categoryName, emoji));
+        }
+        const mainCategory = categoriesMap.get(categoryName);
+        mainCategory.addAmount(parsedAmount); // Add amount to main category total
+
+        // 2. Handle the Subcategory
+        if (subcategoryName) { // Only process if a subcategory is provided
+            const subcategory = mainCategory.getOrCreateSubcategory(subcategoryName);
+            subcategory.addAmount(parsedAmount); // Add amount to subcategory total
+        }
+    });
+
+    return categoriesMap;
+}

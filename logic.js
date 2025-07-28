@@ -82,6 +82,10 @@ function handleCommand(command, chatId) {
     sendMessage(chatId, expense_summary);
   } else if (command === "/stocks") {
     send_daily_stock_summary_message(chatId, title="<b>🔎    💼  Real-Time Stock Brief  💼    🔍</b>\n");
+  }
+  else if(command === "/report"){
+    const expenses = readDataFromSheet("SPENDING").slice(1);
+    sendMessage(chatId, month_spending_message(expenses));
   } else {
     // If command's not found send help (default behavior for /help as well)
     sendMessage(chatId, help_command_message(), "MarkdownV2");

@@ -69,6 +69,10 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
+  📖  /report Gets the totals for your month's spending per category and subcategory
+
+  💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair
+
   ⚖️  /budget Check your budget alignment for the month and year _\\(not available\\)_
 
   🏛️  /invest Gets a summary of your investment portfolio _\\(not available\\)_
@@ -120,6 +124,27 @@ function categories_list_message() {
   }
 
   message += `Use these as a reference anytime you're logging expenses! 📌`;
+  return message;
+}
+
+
+function month_spending_message(expenses){
+  const cat_map = transformExpensesToCategoriesMap(expenses);
+  let message = `📅    📖  *${MONTH_NAME}'s Spending Log*  📖    📅\n\n`;
+  
+  for (const [categoryName, categoryObject] of cat_map) {
+    const emoji = categoryObject.emoji ? categoryObject.emoji: '•';
+    
+    message += ` ${emoji} ${categoryName}:   ${currency_format(categoryObject.total_spent)}\n`;
+    
+    // And again, access subcategories
+    categoryObject.subcategories.forEach(sub => {
+        message += `       • ${sub.name}:   ${currency_format(sub.total_spent)}\n`;
+    });
+
+    message += '\n'
+  }
+
   return message;
 }
 
