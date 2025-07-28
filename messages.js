@@ -70,7 +70,7 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
-  💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair
+  💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\\(not available\\)_
 
   ⚖️  /budget Check your budget alignment for the month and year _\\(not available\\)_
 
