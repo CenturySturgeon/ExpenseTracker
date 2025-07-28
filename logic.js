@@ -61,31 +61,16 @@ function handleCommand(command, chatId) {
     sendMessage(chatId, start_command_message(alias));
   } else if (command === "/cats") {
     sendMessage(chatId, categories_list_message());
-  } else if (command === "/month") {
-    // Data for the current month will always be on row 2, keeping this in case it's useful in the future
-    // const month = MONTH_ZERO_INDEXED + 2; // +1 since G sheets are 1-indexed, + 1 for sheet headers
-    const [
-      total_spent,
-      top_category,
-      total_top_cat,
-      top_subcategory,
-      total_top_subcat,
-    ] = readRowByIndex(MONTHLY_SUMMARY_SHEET, 2, 3, 7);
-    const expense_summary = month_command_message(
-      MONTH_NAME,
-      total_spent,
-      top_category,
-      total_top_cat,
-      top_subcategory,
-      total_top_subcat
-    );
-    sendMessage(chatId, expense_summary);
   } else if (command === "/stocks") {
     send_daily_stock_summary_message(chatId, title="<b>🔎    💼  Real-Time Stock Brief  💼    🔍</b>\n");
   }
   else if(command === "/report"){
     const expenses = readDataFromSheet("SPENDING").slice(1);
-    sendMessage(chatId, month_spending_message(expenses));
+    const report = month_spending_message(expenses)
+
+    const month_summary = readRowByIndex(MONTHLY_SUMMARY_SHEET, 2, 3, 7);
+    const summary_report = month_command_message(month_summary);
+    sendMessage(chatId, report + summary_report);
   } else {
     // If command's not found send help (default behavior for /help as well)
     sendMessage(chatId, help_command_message(), "MarkdownV2");

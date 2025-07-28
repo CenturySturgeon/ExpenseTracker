@@ -17,7 +17,7 @@ function message_expense_confirmation(name_or_description, amount, category) {
 
 /**
  * Telegram confirmation message after an expense has been logged.
- * @param {string} month_name Name of the month that's being queried.
+ * @param {string[]} month_summary An array comprised of the following params.
  * @param {number} total_spent The amount spent during the month.
  * @param {string} top_category The category where the most amount of money was spent.
  * @param {number} total_top_cat The amount spent for top_category.
@@ -26,13 +26,14 @@ function message_expense_confirmation(name_or_description, amount, category) {
  * 
  * @return {string} The formatted message the bot will reply with.
  */
-function month_command_message(month_name, total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat) {
-  return `📊 *${toTitleCase(month_name)} Expense Summary* 📊
+function month_command_message(month_summary) {
+  [total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat] = month_summary
+  return `
+📌 *Top Category:*   ${top_category}
+📍 *Top Subcategory:*   ${top_subcategory}
 
-💸 *Total Spent:* ${currency_format(total_spent)}
 
-📋 *Top Category:* ${top_category} ${currency_format(total_top_cat)}
-📌 *Top Subcategory:* ${top_subcategory} ${currency_format(total_top_subcat)}
+💸 *Total Spent:*   ${currency_format(total_spent)}
 
 🌱 Little strokes fell great oaks 🌱`;
 }
@@ -63,13 +64,11 @@ Type /help to see what I can do! 🔍
 function help_command_message() {
   return `    🧰 *Available Commands* 🧰
 
-  📅  /month View a summary of your spending for the current month
+  📖  /report Get the current month's spending log
 
   🗂️  /cats Get a list of all your logged categories
 
   📊  /stocks Gets a summary of your tracked stocks
-
-  📖  /report Gets the totals for your month's spending per category and subcategory
 
   💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair
 
