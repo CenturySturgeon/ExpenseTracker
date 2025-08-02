@@ -1,13 +1,24 @@
 function daily() {
-  const today = new Date().getDay(); // 0 = Sunday, 1 Monday, ...
+  const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-  if (today >= 1 && today <= 5) {
-    // Monday to Friday
-    send_daily_stock_summary_message(
-      Object.keys(CHAT_TO_USER)[0],
-      (title = "<b>📬    📰  Daily Pre-Market Overview  📰    📬</b>\n"),
-      true
-    );
+  // Run only if trigger is active and it's a weekday (Mon-Fri)
+  if (
+    TRIGGERS_MAP["daily_stock_summary"] === true &&
+    today >= 1 &&
+    today <= 5
+  ) {
+    const maxAttempts = 3;
+    const chatId = Object.keys(CHAT_TO_USER)[0];
+    const title = "<b>📬    📰  Daily Pre-Market Overview  📰    📬</b>\n";
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        send_daily_stock_summary_message(chatId, title, true);
+        break; // Success — exit loop
+      } catch (error) {
+        Logger.log(`❌ Attempt ${attempt} failed: ${error}`);
+      }
+    }
   }
 }
 

@@ -70,11 +70,11 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
-  💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\\(not available\\)_
+  📈  /track {Ticker}, {Price} Monitors a stock by ticker and a reference price 
 
-  ⚖️  /budget Check your budget alignment for the month and year _\\(not available\\)_
+  💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\(not available\)_
 
-  🏛️  /invest Gets a summary of your investment portfolio _\\(not available\\)_
+  🏛️  /invest Gets a summary of your investment portfolio _\(not available\)_
 
   ℹ️  /help Show this list of commands
 
