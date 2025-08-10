@@ -70,7 +70,7 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
-  📈  /track {Ticker}, {Price} Monitors a stock by ticker and a reference price 
+  📈  /track {Ticker} {Price} Monitors a stock by ticker and a reference price 
 
   💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\(not available\)_
 
@@ -167,4 +167,16 @@ function stock_summary_message(title, currencies, stocks, phrase = false) {
 
   phrase && lines.push('\n🌷 Courage is not the towering oak that sees storms come and go; it is the fragile blossom that opens in the snow. 🌷');
   return lines.join('\n');
+}
+
+
+/**
+ * Telegram confirmation message after a stock has been tracked.
+ * @param {string} ticker The ticker symbol of the stock.
+ * @param {number} referencePrice The price per share at the time of purchase.
+ * @return {string} The formatted one-line message the bot will reply with.
+ */
+function stock_tracked_confirmation_message(ticker, referencePrice) {
+  return `🚀  Tracking *${ticker}*  🚀
+🎯  Target:  ${currency_format(referencePrice)}`;
 }

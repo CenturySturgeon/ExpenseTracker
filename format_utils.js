@@ -16,7 +16,6 @@ function extractNumber(str) {
   return Number(match[0]);
 }
 
-
 /**
  * Cleans up a string by removing leading and trailing whitespace
  * and replacing multiple internal spaces with a single space.
@@ -30,8 +29,8 @@ function extractNumber(str) {
  */
 function cleanSpaces(str) {
   return str
-    .replace(/^\s+|\s+$/g, '')   // Trim leading and trailing whitespace
-    .replace(/\s{2,}/g, ' ');    // Replace two or more spaces with a single space
+    .replace(/^\s+|\s+$/g, "") // Trim leading and trailing whitespace
+    .replace(/\s{2,}/g, " "); // Replace two or more spaces with a single space
 }
 
 /**
@@ -45,7 +44,6 @@ function extractEmojis(str) {
   return str.match(emojiRegex) || null;
 }
 
-
 /**
  * Removes all emoji characters from a given string.
  *
@@ -54,9 +52,8 @@ function extractEmojis(str) {
  */
 function removeEmojis(str) {
   const emojiRegex = /\p{Emoji}/gu;
-  return str.replace(emojiRegex, '');
+  return str.replace(emojiRegex, "");
 }
-
 
 /**
  * Converts the provided string into title case.
@@ -71,7 +68,6 @@ function toTitleCase(str) {
     .join(" ");
 }
 
-
 /**
  * Returns the keys of an object sorted in alphabetical order.
  *
@@ -82,7 +78,6 @@ function getObjectSortedKeys(obj) {
   const sortedKeys = Object.keys(obj).sort(); // Sort the keys alphabetically
   return sortedKeys;
 }
-
 
 /**
  * Maps categories to their respective subcategories from a 2D array.
@@ -122,7 +117,6 @@ function mapCategoriesToSubcategories(data) {
   return result;
 }
 
-
 /**
  * Formats a number as US currency.
  *
@@ -141,39 +135,86 @@ function currency_format(amount) {
   }).format(amount);
 }
 
-
 /**
  * Transforms a list of expense arrays into a hierarchical map of Category objects.
  * @param {Array<Array<string | number>>} expenses - A list of lists, where each inner list is [month_name, category, subcategory, amount].
  * @returns {Map<string, Category>} A Map where keys are main category names and values are Category objects.
  */
 function transformExpensesToCategoriesMap(expenses) {
-    const categoriesMap = new Map();
+  const categoriesMap = new Map();
 
-    expenses.forEach(expense => {
-        const [, categoryName, subcategoryName, amount] = expense;
+  expenses.forEach((expense) => {
+    const [, categoryName, subcategoryName, amount] = expense;
 
-        // Ensure the amount is a number for calculations
-        const parsedAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-        if (isNaN(parsedAmount)) {
-            return; // Skip this expense if amount is not a valid number
-        }
+    // Ensure the amount is a number for calculations
+    const parsedAmount =
+      typeof amount === "string" ? parseFloat(amount) : amount;
+    if (isNaN(parsedAmount)) {
+      return; // Skip this expense if amount is not a valid number
+    }
 
-        // 1. Handle the Main Category
-        if (!categoriesMap.has(categoryName)) {
-            // Create a new main category if it doesn't exist
-            const emoji = CATEGORY_EMOJIS_MAP[categoryName] || null; // Assign emoji
-            categoriesMap.set(categoryName, new Category(categoryName, emoji));
-        }
-        const mainCategory = categoriesMap.get(categoryName);
-        mainCategory.addAmount(parsedAmount); // Add amount to main category total
+    // 1. Handle the Main Category
+    if (!categoriesMap.has(categoryName)) {
+      // Create a new main category if it doesn't exist
+      const emoji = CATEGORY_EMOJIS_MAP[categoryName] || null; // Assign emoji
+      categoriesMap.set(categoryName, new Category(categoryName, emoji));
+    }
+    const mainCategory = categoriesMap.get(categoryName);
+    mainCategory.addAmount(parsedAmount); // Add amount to main category total
 
-        // 2. Handle the Subcategory
-        if (subcategoryName) { // Only process if a subcategory is provided
-            const subcategory = mainCategory.getOrCreateSubcategory(subcategoryName);
-            subcategory.addAmount(parsedAmount); // Add amount to subcategory total
-        }
-    });
+    // 2. Handle the Subcategory
+    if (subcategoryName) {
+      // Only process if a subcategory is provided
+      const subcategory = mainCategory.getOrCreateSubcategory(subcategoryName);
+      subcategory.addAmount(parsedAmount); // Add amount to subcategory total
+    }
+  });
 
-    return categoriesMap;
+  return categoriesMap;
+}
+
+/**
+ * Parses a tracking command in the format "/track TICKER, PRICE".
+ * PRICE is optional. TICKER is required.
+ * @param {string} message - The input string containing the tracking command.
+ * @returns {{ ticker: string, price?: number }} An object with `ticker` and optional `price`.
+ * @throws {Error} If parsing fails with specific error messages.
+ */
+function parseTrackCommand(message) {
+  if (!message.startsWith("/track")) {
+    throw new Error("Command must start with '/track'");
+  }
+
+  const commandBody = cleanSpaces(message.slice(6).trim()); // Removes '/track'
+  if (!commandBody) {
+    throw new Error("Ticker is missing. Format should be '/track TICKER PRICE'");
+  }
+
+  const parts = commandBody.split(" ");
+  const tickerPart = parts[0].trim();
+  if (!tickerPart) {
+    throw new Error("Ticker is missing or empty.");
+  }
+
+  const tickerMatch = tickerPart.match(/^[A-Za-z.\-]+$/);
+  if (!tickerMatch) {
+    throw new Error(`Invalid ticker format: '${tickerPart}'`);
+  }
+
+  const ticker = tickerPart.toUpperCase();
+
+  let price;
+  if (parts.length > 1) {
+    const pricePart = parts[1].trim();
+    try {
+      price = extractNumber(pricePart);
+      if (price < 0) {
+        throw new Error("Price must be a non-negative number.");
+      }
+    } catch (e) {
+      throw new Error(`Invalid price format: '${pricePart}'. ${e.message}`);
+    }
+  }
+
+  return price !== undefined ? { ticker, price } : { ticker };
 }

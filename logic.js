@@ -62,11 +62,58 @@ function handleCommand(command, chatId) {
   } else if (command === "/cats") {
     sendMessage(chatId, categories_list_message());
   } else if (command === "/stocks") {
-    send_daily_stock_summary_message(chatId, title="<b>🔎    💼  Real-Time Stock Brief  💼    🔍</b>\n");
-  }
-  else if(command === "/report"){
+    send_daily_stock_summary_message(
+      chatId,
+      (title = "<b>🔎    💼  Real-Time Stock Brief  💼    🔍</b>\n")
+    );
+  } else if (command.includes("/track")) {
+    const track_object = parseTrackCommand(command);
+    let price;
+    debugLog(`Tracking: ${command}`);
+
+    try {
+      if (track_object.price !== undefined) {
+        price = track_object.price;
+        writeToSheet(
+          [track_object.ticker, track_object.price],
+          SHEET_ALIAS_TO_NAME_MAP["TRACK"],
+          false
+        );
+      } else {
+        const last_row =
+          getLastRowIndex(SHEET_ALIAS_TO_NAME_MAP["TRACK"], "edit_sheet") + 1;
+        writeToSheet(
+          [track_object.ticker],
+          SHEET_ALIAS_TO_NAME_MAP["TRACK"],
+          false
+        );
+        Utilities.sleep(3000);
+        const targetless_row = readRowByIndex(
+          SHEET_ALIAS_TO_NAME_MAP["TRACK"],
+          last_row,
+          1,
+          3,
+          "edit_sheet"
+        );
+        price = targetless_row[2];
+        overwriteRow(
+          last_row,
+          [track_object.ticker, price],
+          (SHEET_ALIAS_TO_NAME_MAP["TRACK"] = "TRACK")
+        );
+      }
+    } catch (e) {
+      debugLog(e);
+      sendMessage(chatId, "Command must match: /track {TICKER} {PRICE}");
+    }
+
+    sendMessage(
+      chatId,
+      stock_tracked_confirmation_message(track_object.ticker, price)
+    );
+  } else if (command === "/report") {
     const expenses = readDataFromSheet("SPENDING").slice(1);
-    const report = month_spending_message(expenses)
+    const report = month_spending_message(expenses);
 
     const month_summary = readRowByIndex(MONTHLY_SUMMARY_SHEET, 2, 3, 7);
     const summary_report = month_command_message(month_summary);

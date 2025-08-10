@@ -144,3 +144,36 @@ https://docs.google.com/spreadsheets/d/<SHEET_ID>/copy
 
 ## Example
 https://docs.google.com/spreadsheets/d/1aBcD1234EFgHIjkLmNOpQrStUvWxYz/copy
+
+
+## Set telegram bot menu button commands
+
+```
+curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setMyCommands" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "commands": [
+      { "command": "report", "description": "Get the current month'\''s spending log" },
+      { "command": "cats", "description": "Get a list of all your logged categories" },
+      { "command": "stocks", "description": "Gets a summary of your tracked stocks" },
+      { "command": "help", "description": "Show this list of commands" }
+    ]
+  }'
+```
+
+
+# Environment variables
+
+```
+categoryEmojis: {"Health":"💊","Transport":"🚃","Travel":"✈️","Food":"🍗","Home":"🏠","Self":"🏂","Partner":"🦦","Vacations":"🏕", "Hobbies": "🎮"}
+chatMap: { "1234567890": "Alias" }
+currencyEmojis: {"Dollar":"💵", "Euro": "💶"}
+debugMode: false
+logSheetName: LOGS
+readSpreadsheetNames: {"EXPENSES":"EXPENSES","MONTHLY":"MONTHLY SUMMARY","CATEGORIES":"CATEGORIES","SPENDING": "SPENDING", "TRACK":"TRACK"}
+secretToken: YOUR_SECRET_TOKEN
+spreadsheetIds: {"edit_sheet":"GOOGLE_SHEET_ID","read_only_sheet":"GOOGLE_SHEET_ID"}
+spreadsheetNames: {"EXPENSES":"EXPENSES","MONTHLY":"MONTHLY EXPENSES","CATEGORIES":"CATEGORIES","TRACK":"TRACK"}
+telegramToken: TELEGRAM_BOT_TOKEN
+triggers: {"daily_stock_summary": true}
+```
