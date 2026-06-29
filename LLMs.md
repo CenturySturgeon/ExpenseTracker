@@ -36,7 +36,7 @@ graph TB
         DataStore --> SpendingSheet[SPENDING Sheet]
         DataStore --> TrackSheet[TRACK Sheet]
         DataStore --> CurrenciesSheet[CURRENCIES Sheet]
-        DataStore --> LogSheet[LOG Sheet]
+        DataStore --> LogSheet[LOGS Sheet]
     end
     
     subgraph "Configuration - PropertiesService"
@@ -373,7 +373,7 @@ The bot uses multiple sheets across potentially two spreadsheets (edit and read-
 | `SPENDING` | SPENDING | Historical spending for reports | Month, Category, Subcategory, Amount |
 | `TRACK` | TRACK | Tracked stocks | Ticker, Reference Price, Current Price, % Change |
 | `CURRENCIES` | CURRENCIES | Tracked currencies | Currency Name, Symbol, Value, % Change |
-| `LOG` | LOG (configurable) | Debug log entries | Message text |
+| `LOGS` | LOGS (configurable) | Debug log entries | Message text |
 
 ---
 

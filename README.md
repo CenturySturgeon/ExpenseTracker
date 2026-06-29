@@ -78,7 +78,7 @@ Create a new Google Spreadsheet with the following tabs (sheets):
 | `SPENDING`        | Aggregated spending data for reports                   | `Month`, `Category`, `Subcategory`, `Amount`                                                                                |
 | `TRACK`           | Stock tracking data                                    | `Ticker`, `Price`, (additional columns populated by API)                                                                    |
 | `CURRENCIES`      | Currency exchange rates                                | Columns include currency name and value                                                                                     |
-| `LOG`            | Debug logs (optional, used when debug mode is enabled) | Single column for log messages                                                                                              |
+| `LOGS`            | Debug logs (optional, used when debug mode is enabled) | Single column for log messages                                                                                              |
 
 **Important:** Note down the **Spreadsheet ID** from the URL. It is the long string between `/d/` and `/edit`:
 
