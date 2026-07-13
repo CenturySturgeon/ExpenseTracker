@@ -35,8 +35,8 @@ function send_daily_stock_summary_message(chatId, title, phrase = false) {
       new Currency(
         Number(currency[2]),
         currency[1],
-        CURRENCY_EMOJIS_MAP[currency[1]] ?? ""
-      )
+        CURRENCY_EMOJIS_MAP[currency[1]] ?? "",
+      ),
     );
   }
 
@@ -44,6 +44,6 @@ function send_daily_stock_summary_message(chatId, title, phrase = false) {
     chatId,
     stock_summary_message(title, currencies, stocks, phrase),
     true,
-    "HTML"
+    "HTML",
   );
 }

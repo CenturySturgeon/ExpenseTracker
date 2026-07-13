@@ -3,7 +3,7 @@
  * @param {string} name_or_description Name/Description of the income.
  * @param {number} amount The amount earned.
  * @param {string} category The category/subcategory line.
- * 
+ *
  * @return {string} The formatted message the bot will reply with.
  */
 function message_income_confirmation(name_or_description, amount, category) {
@@ -31,7 +31,7 @@ function getCachedQuote() {
     const now = Date.now();
     const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
-    if ((now - timestamp) < twentyFourHoursMs) {
+    if (now - timestamp < twentyFourHoursMs) {
       return `🌱 ${cachedQuote} 🌱`;
     }
   }
@@ -42,7 +42,7 @@ function getCachedQuote() {
   try {
     const response = UrlFetchApp.fetch("https://zenquotes.io/api/random");
     const data = JSON.parse(response.getContentText());
-    if (data && data.length > 0 && data[0].q !=="" ) {
+    if (data && data.length > 0 && data[0].q !== "") {
       const quote = `${data[0].q} — ${data[0].a}`;
       // Cache the new quote and timestamp
       cache.setProperty(QUOTE_CACHE_KEY, quote);
@@ -62,7 +62,7 @@ function getCachedQuote() {
  * @param {string} name_or_description Name/Description of the expense.
  * @param {number} amount The amount spent.
  * @param {string} category The category/subcategory line.
- * 
+ *
  * @return {string} The formatted message the bot will reply with.
  */
 function message_expense_confirmation(name_or_description, amount, category) {
@@ -85,7 +85,13 @@ function message_expense_confirmation(name_or_description, amount, category) {
  * @return {string} The formatted message the bot will reply with.
  */
 function month_command_message(month_summary) {
-  [total_spent, top_category, total_top_cat, top_subcategory, total_top_subcat] = month_summary
+  [
+    total_spent,
+    top_category,
+    total_top_cat,
+    top_subcategory,
+    total_top_subcat,
+  ] = month_summary;
   return `
 📌 *Top Category:*   ${top_category}
 📍 *Top Subcategory:*   ${top_subcategory}
@@ -160,15 +166,20 @@ More features coming soon\\! 💹
  * @return {string} The formatted message the bot will reply with.
  */
 function categories_list_message() {
-  const categories = mapCategoriesToSubcategories(readDataFromSheet(CATEGORIES_SHEET));
+  const categories = mapCategoriesToSubcategories(
+    readDataFromSheet(CATEGORIES_SHEET),
+  );
   const sorted_cat_obj_keys = getObjectSortedKeys(categories);
 
   let message = `🗂️ *Your Expense Categories & Subcategories* 🗂️\n\n`;
 
   for (const category of sorted_cat_obj_keys) {
-    category_emoji = category in CATEGORY_EMOJIS_MAP ? ' '+ CATEGORY_EMOJIS_MAP[category] + ' ' : '';
-    message += category_emoji + `*${category}*` + '\n';
-    const subcategories = categories[category]
+    category_emoji =
+      category in CATEGORY_EMOJIS_MAP
+        ? " " + CATEGORY_EMOJIS_MAP[category] + " "
+        : "";
+    message += category_emoji + `*${category}*` + "\n";
+    const subcategories = categories[category];
     if (subcategories.length > 0) {
       for (const sub of subcategories) {
         message += `       • ${sub}\n`;
@@ -184,49 +195,55 @@ function categories_list_message() {
   return message;
 }
 
-
-function month_spending_message(expenses){
+function month_spending_message(expenses) {
   const cat_map = transformExpensesToCategoriesMap(expenses);
   let message = `📅    📖  *${MONTH_NAME}'s Spending Log*  📖    📅\n\n`;
-  
+
   for (const [categoryName, categoryObject] of cat_map) {
-    const emoji = categoryObject.emoji ? categoryObject.emoji: '•';
-    
+    const emoji = categoryObject.emoji ? categoryObject.emoji : "•";
+
     message += ` ${emoji} ${categoryName}:   ${currency_format(categoryObject.total_spent)}\n`;
-    
+
     // And again, access subcategories
-    categoryObject.subcategories.forEach(sub => {
-        message += `       • ${sub.name}:   ${currency_format(sub.total_spent)}\n`;
+    categoryObject.subcategories.forEach((sub) => {
+      message += `       • ${sub.name}:   ${currency_format(sub.total_spent)}\n`;
     });
 
-    message += '\n'
+    message += "\n";
   }
 
   return message;
 }
 
-
 function stock_summary_message(title, currencies, stocks, phrase = false) {
   const lines = [title];
-  let currencies_block = '';
-  for (const currency of currencies){
-    currencies_block += `  ${currency.display_str}\n`
+  let currencies_block = "";
+  for (const currency of currencies) {
+    currencies_block += `  ${currency.display_str}\n`;
   }
   lines.push(currencies_block);
 
   // Determine padding values based on the longest name and change
-  const namePad = Math.max(...stocks.map(s => s.stock_name.length));
-  const changePad = Math.max(...stocks.map(s => s.getFormattedChange().length));
+  const namePad = Math.max(...stocks.map((s) => s.stock_name.length));
+  const changePad = Math.max(
+    ...stocks.map((s) => s.getFormattedChange().length),
+  );
 
   // Monospaced block
   for (const stock of stocks) {
-    lines.push(`<code class="monospace-text">` + stock.toDisplayLine(namePad, changePad) + `</code>`);
+    lines.push(
+      `<code class="monospace-text">` +
+        stock.toDisplayLine(namePad, changePad) +
+        `</code>`,
+    );
   }
 
-  phrase && lines.push('\n🌷 Courage is not the towering oak that sees storms come and go; it is the fragile blossom that opens in the snow. 🌷');
-  return lines.join('\n');
+  phrase &&
+    lines.push(
+      "\n🌷 Courage is not the towering oak that sees storms come and go; it is the fragile blossom that opens in the snow. 🌷",
+    );
+  return lines.join("\n");
 }
-
 
 /**
  * Telegram confirmation message after a stock has been tracked.

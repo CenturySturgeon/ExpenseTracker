@@ -15,7 +15,6 @@ function writeToSheet(row, sheetName, addTimestamp = true) {
   sheet.appendRow(writeRow);
 }
 
-
 /**
  * Writes an expense row, using the row array, to the provided sheet.
  * This function is necessary because the expenses sheet has a protected range -> Cells must be specified.
@@ -31,16 +30,20 @@ function writeExpense(row, sheetName) {
   }
 
   // Get last row with content in the timestamp column (you should've all rows with timestamps)
-  const lastRowWithTimestamp = sheet.getRange("A:A").getValues().filter(String).length;
+  const lastRowWithTimestamp = sheet
+    .getRange("A:A")
+    .getValues()
+    .filter(String).length;
   const nextRow = lastRowWithTimestamp + 1;
 
   const timestamp = new Date();
   const row_with_timestamp = [timestamp, ...row];
 
   // Write the row data to columns B to E
-  sheet.getRange(nextRow, 1, 1, row_with_timestamp.length).setValues([row_with_timestamp]);
+  sheet
+    .getRange(nextRow, 1, 1, row_with_timestamp.length)
+    .setValues([row_with_timestamp]);
 }
-
 
 /**
  * Reads a single row from the provided spreadsheet, using the 1-indexed row and column.
@@ -50,7 +53,13 @@ function writeExpense(row, sheetName) {
  * @param {number} end_column  - Inclusive column index to stop the range (1-indexed; not zero-index)
  * @returns {any[]} An array of values for the givent range.
  */
-function readRowByIndex(sheet_name, row, start_column, end_column, document = "read_only_sheet") {
+function readRowByIndex(
+  sheet_name,
+  row,
+  start_column,
+  end_column,
+  document = "read_only_sheet",
+) {
   let ss = SpreadsheetApp.openById(SPREADSHEET_ID_MAP[document]);
   const sheet = ss.getSheetByName(sheet_name);
   var total_columns = end_column - start_column + 1;
@@ -60,7 +69,6 @@ function readRowByIndex(sheet_name, row, start_column, end_column, document = "r
     .getValues(); // row index, column index, rows to include, total number of columns for the range
   return rowValues[0]; // Return as a 1D array
 }
-
 
 /**
  * Reads a single cell from the provided spreadsheet, using the 1-indexed row and column.
@@ -76,7 +84,6 @@ function readSingleCell(sheetName, row, column) {
   return String(cellValue);
 }
 
-
 /**
  * Reads all data from the provided sheet.
  * @param {string} sheetName  - Name of the sheet to query for data.
@@ -90,12 +97,11 @@ function readDataFromSheet(sheetName, document = "read_only_sheet") {
   return values;
 }
 
-function getLastRowIndex(sheetName, document = "read_only_sheet"){
+function getLastRowIndex(sheetName, document = "read_only_sheet") {
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID_MAP[document]);
   var sheet = ss.getSheetByName(sheetName);
   return sheet.getLastRow();
 }
-
 
 /**
  * Overwrites a row in the provided sheet with the given row array.
@@ -111,10 +117,9 @@ function overwriteRow(rowIndex, row, sheetName) {
     debugLog("Error: Invalid row index for sheet: " + sheetName);
   }
 
-  
   // const numColumns = sheet.getLastColumn(); // Could be useful later on
   const range = sheet.getRange(rowIndex, 1, 1, row.length);
-  
+
   // The new values must be a 2D array, so we wrap the row array.
   range.setValues([row]);
 }

@@ -21,7 +21,6 @@ function sendMessage(chatId, message, silent = true, parseMode = "Markdown") {
   UrlFetchApp.fetch(url, payload);
 }
 
-
 /**
  * Verifies the origin chat id is authorized to perform actions.
  * @param {string} chatId  - Telegram chat ID that originated the request.
@@ -39,13 +38,11 @@ function authenticate(chatId, requestToken) {
   }
 }
 
-
 // API Return Functions
 function respondOk(message = "Ok") {
   // For Telegram webhooks, 200 OK is best to prevent retries.
   return HtmlService.createHtmlOutput(message);
 }
-
 
 function respondJson(obj) {
   return HtmlService.createHtmlOutput(JSON.stringify(obj));

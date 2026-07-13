@@ -6,7 +6,7 @@ function doPost(e) {
   let secretToken;
   try {
     update = JSON.parse(e.postData.contents);
-    secretToken = e?.parameters?.token;;
+    secretToken = e?.parameters?.token;
     debugLog("Received request: " + JSON.stringify(update));
   } catch (error) {
     debugLog("Error parsing Telegram update: " + error.message);
@@ -32,7 +32,7 @@ function doPost(e) {
     DEBUG_MODE &&
       writeToSheet(
         ["Duplicate or old update_id received. Ignoring: " + updateId],
-        LOG_SHEET
+        LOG_SHEET,
       );
     // Important: Always return a 200 OK even for duplicates,
     // otherwise Telegram will keep retrying.
@@ -42,7 +42,6 @@ function doPost(e) {
   try {
     const chat_id = authenticate(
       update.message ? update.message.chat.id : null,
-
     );
     handleUpdate(update, String(update.message.chat.id));
   } catch (error) {

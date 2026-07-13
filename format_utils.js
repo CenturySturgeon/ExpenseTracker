@@ -187,7 +187,9 @@ function parseTrackCommand(message) {
 
   const commandBody = cleanSpaces(message.slice(6).trim()); // Removes '/track'
   if (!commandBody) {
-    throw new Error("Ticker is missing. Format should be '/track TICKER PRICE'");
+    throw new Error(
+      "Ticker is missing. Format should be '/track TICKER PRICE'",
+    );
   }
 
   const parts = commandBody.split(" ");
