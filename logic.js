@@ -20,12 +20,18 @@ function handleExpenseEntry(text, chatId) {
     debugLog("Not enough args");
     sendMessage(
       chatId,
-      "Please use the format: amount, category, subcategory (optional), description (optional)"
+      "Please use the format: amount, category, subcategory (optional), description (optional)",
     );
     return;
   }
 
   const amount = extractNumber(parts[0]);
+
+  let isIncome = false;
+  if (amount < 0) {
+    isIncome = true;
+    amount = Math.abs(amount);
+  }
 
   const category = toTitleCase(cleanSpaces(removeEmojis(String(parts[1]))));
   const category_emojis = extractEmojis(String(parts[1]));
@@ -34,7 +40,7 @@ function handleExpenseEntry(text, chatId) {
     CATEGORY_EMOJIS_MAP[category] = category_emojis[0];
     SCRIPT_PROPERTIES.setProperty(
       CATEGORY_EMOJIS_KEY,
-      JSON.stringify(CATEGORY_EMOJIS_MAP)
+      JSON.stringify(CATEGORY_EMOJIS_MAP),
     );
   }
 
@@ -45,12 +51,29 @@ function handleExpenseEntry(text, chatId) {
     ? toTitleCase(cleanSpaces(String(parts[3])))
     : null;
 
-  writeExpense([amount, category, subcategory, description], EXPENSES_SHEET);
+  const targetSheet = isIncome ? INCOME_SHEET : EXPENSES_SHEET;
+  try {
+    writeExpense([amount, category, subcategory, description], targetSheet);
+  } catch (e) {
+    debugLog("Error writing to sheet " + targetSheet + ": " + e.message);
+    sendMessage(
+      chatId,
+      "❌ Error saving entry. Please check if the sheet exists.",
+    );
+    return;
+  }
 
   const catLine = subcategory ? `${category} / ${subcategory}` : category;
   const descLine = description || subcategory || category;
 
-  sendMessage(chatId, message_expense_confirmation(descLine, amount, catLine));
+  if (isIncome) {
+    sendMessage(chatId, message_income_confirmation(descLine, amount, catLine));
+  } else {
+    sendMessage(
+      chatId,
+      message_expense_confirmation(descLine, amount, catLine),
+    );
+  }
 }
 
 function handleCommand(command, chatId) {
@@ -64,7 +87,7 @@ function handleCommand(command, chatId) {
   } else if (command === "/stocks") {
     send_daily_stock_summary_message(
       chatId,
-      (title = "<b>🔎    💼  Real-Time Stock Brief  💼    🔍</b>\n")
+      (title = "<b>🔎    💼  Real-Time Stock Brief  💼    🔍</b>\n"),
     );
   } else if (command.includes("/track")) {
     const track_object = parseTrackCommand(command);
@@ -77,7 +100,7 @@ function handleCommand(command, chatId) {
         writeToSheet(
           [track_object.ticker, track_object.price],
           SHEET_ALIAS_TO_NAME_MAP["TRACK"],
-          false
+          false,
         );
       } else {
         const last_row =
@@ -85,7 +108,7 @@ function handleCommand(command, chatId) {
         writeToSheet(
           [track_object.ticker],
           SHEET_ALIAS_TO_NAME_MAP["TRACK"],
-          false
+          false,
         );
         Utilities.sleep(3000);
         const targetless_row = readRowByIndex(
@@ -93,13 +116,13 @@ function handleCommand(command, chatId) {
           last_row,
           1,
           3,
-          "edit_sheet"
+          "edit_sheet",
         );
         price = targetless_row[2];
         overwriteRow(
           last_row,
           [track_object.ticker, price],
-          (SHEET_ALIAS_TO_NAME_MAP["TRACK"] = "TRACK")
+          (SHEET_ALIAS_TO_NAME_MAP["TRACK"] = "TRACK"),
         );
       }
     } catch (e) {
@@ -109,7 +132,7 @@ function handleCommand(command, chatId) {
 
     sendMessage(
       chatId,
-      stock_tracked_confirmation_message(track_object.ticker, price)
+      stock_tracked_confirmation_message(track_object.ticker, price),
     );
   } else if (command === "/report") {
     const expenses = readDataFromSheet("SPENDING").slice(1);

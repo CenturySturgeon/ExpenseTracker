@@ -10,10 +10,25 @@ function message_expense_confirmation(name_or_description, amount, category) {
   return `💸 Expense recorded 💸
 
 📝 *${name_or_description}*
-💰 ${currency_format(amount)}
+💸 ${currency_format(amount)}
 📂 ${category}`;
 }
 
+/**
+ * Telegram confirmation message after an income has been logged.
+ * @param {string} name_or_description Name/Description of the income.
+ * @param {number} amount The amount earned.
+ * @param {string} category The category/subcategory line.
+ * 
+ * @return {string} The formatted message the bot will reply with.
+ */
+function message_income_confirmation(name_or_description, amount, category) {
+  return `💰 Income recorded 💰
+
+📝 *${name_or_description}*
+💰 ${currency_format(amount)}
+📂 ${category}`;
+}
 
 /**
  * Telegram confirmation message after an expense has been logged.
@@ -37,8 +52,6 @@ function month_command_message(month_summary) {
 
 🌱 Little strokes fell great oaks 🌱`;
 }
-
-
 /**
  * Returns the Telegram message when initializing conversation with bot.
  * * @param {string} alias Username alias.
@@ -48,9 +61,9 @@ function start_command_message(alias = "") {
   return `
 ✨ Hi there${", " + alias}! I'm your personal expense assistant ✨  
 
-Here's what I can help you with:  
-📌 Track daily expenses  
-📊 Summarize your monthly spending  
+Here's what I can help you with:
+📌 Track daily expenses
+📊 Summarize your monthly spending
 🎯 Keep you on budget and reaching your goals
 
 Type /help to see what I can do! 🔍
@@ -96,7 +109,6 @@ _Emojis on the category field will be assigned as the category emoji_
 More features coming soon\\! 💹
 `;
 }
-
 /**
  * Telegram message listing the user's expense categories and subcategories.
  * @param {Object} categories An object where keys are category names and values are arrays of subcategory names.
@@ -118,6 +130,7 @@ function categories_list_message() {
       }
     } else {
       message += `       • _No subcategories_\n`;
+      return message;
     }
     message += `\n`;
   }
