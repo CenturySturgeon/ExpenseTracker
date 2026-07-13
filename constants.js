@@ -10,6 +10,8 @@ const SPREADHSHEED_MAP_KEY = "readSpreadsheetNames";
 const SECRET_TOKEN_KEY = 'secretToken';
 const CURRENCY_EMOJIS_KEY = 'currencyEmojis';
 const TRIGGERS_KEY = 'triggers';
+const QUOTE_CACHE_KEY = 'quoteCache';
+const QUOTE_TIMESTAMP_KEY = 'quoteTimestamp';
 
 // PropertiesService (env) Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();

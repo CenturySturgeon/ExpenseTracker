@@ -1,20 +1,4 @@
 /**
- * Telegram confirmation message after an expense has been logged.
- * @param {string} name_or_description Name/Description of the expense.
- * @param {number} amount The amount spent.
- * @param {string} category The category/subcategory line.
- * 
- * @return {string} The formatted message the bot will reply with.
- */
-function message_expense_confirmation(name_or_description, amount, category) {
-  return `💸 Expense recorded 💸
-
-📝 *${name_or_description}*
-💸 ${currency_format(amount)}
-📂 ${category}`;
-}
-
-/**
  * Telegram confirmation message after an income has been logged.
  * @param {string} name_or_description Name/Description of the income.
  * @param {number} amount The amount earned.
@@ -31,6 +15,65 @@ function message_income_confirmation(name_or_description, amount, category) {
 }
 
 /**
+ * Returns a cached motivational quote, fetching from zenquotes.io if needed.
+ * Caches the quote for 24 hours to limit API calls.
+ *
+ * @return {string} The motivational quote with leaf emoji styling.
+ */
+function getCachedQuote() {
+  const cache = PropertiesService.getScriptProperties();
+  const cachedQuote = cache.getProperty(QUOTE_CACHE_KEY);
+  const timestampStr = cache.getProperty(QUOTE_TIMESTAMP_KEY);
+
+  // Check if we have a valid cached quote (less than 24 hours old)
+  if (cachedQuote && timestampStr) {
+    const timestamp = parseInt(timestampStr, 10);
+    const now = Date.now();
+    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
+
+    if ((now - timestamp) < twentyFourHoursMs) {
+      return `🌱 ${cachedQuote} 🌱`;
+    }
+  }
+
+  // Fallback quote in case of API failure
+  const fallbackQuote = "Little strokes fell great oaks";
+
+  try {
+    const response = UrlFetchApp.fetch("https://zenquotes.io/api/random");
+    const data = JSON.parse(response.getContentText());
+    if (data && data.length > 0 && data[0].q !=="" ) {
+      const quote = `${data[0].q} — ${data[0].a}`;
+      // Cache the new quote and timestamp
+      cache.setProperty(QUOTE_CACHE_KEY, quote);
+      cache.setProperty(QUOTE_TIMESTAMP_KEY, Date.now().toString());
+      return `🌱 ${quote} 🌱`;
+    }
+  } catch (error) {
+    // API failed, use fallback quote
+    debugLog("Failed to fetch motivational quote: " + error.message);
+  }
+
+  return `🌱 ${fallbackQuote} 🌱`;
+}
+
+/**
+ * Telegram confirmation message after an expense has been logged.
+ * @param {string} name_or_description Name/Description of the expense.
+ * @param {number} amount The amount spent.
+ * @param {string} category The category/subcategory line.
+ * 
+ * @return {string} The formatted message the bot will reply with.
+ */
+function message_expense_confirmation(name_or_description, amount, category) {
+  return `💸 Expense recorded 💸
+
+📝 *${name_or_description}*
+💸 ${currency_format(amount)}
+📂 ${category}`;
+}
+
+/**
  * Telegram confirmation message after an expense has been logged.
  * @param {string[]} month_summary An array comprised of the following params.
  * @param {number} total_spent The amount spent during the month.
@@ -38,7 +81,7 @@ function message_income_confirmation(name_or_description, amount, category) {
  * @param {number} total_top_cat The amount spent for top_category.
  * @param {string} top_subcategory The top category's subcategory where the most amount of money was spent.
  * @param {number} total_top_subcat The amount spent for top_subcategory.
- * 
+ *
  * @return {string} The formatted message the bot will reply with.
  */
 function month_command_message(month_summary) {
@@ -50,8 +93,9 @@ function month_command_message(month_summary) {
 
 💸 *Total Spent:*   ${currency_format(total_spent)}
 
-🌱 Little strokes fell great oaks 🌱`;
+${getCachedQuote()}`;
 }
+
 /**
  * Returns the Telegram message when initializing conversation with bot.
  * * @param {string} alias Username alias.
@@ -109,6 +153,7 @@ _Emojis on the category field will be assigned as the category emoji_
 More features coming soon\\! 💹
 `;
 }
+
 /**
  * Telegram message listing the user's expense categories and subcategories.
  * @param {Object} categories An object where keys are category names and values are arrays of subcategory names.
