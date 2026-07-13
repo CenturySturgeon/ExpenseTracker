@@ -36,8 +36,11 @@ function getCachedQuote() {
     }
   }
 
-  // Fallback quote in case of API failure
-  const fallbackQuote = "Little strokes fell great oaks";
+  // Fallback quotes in case of API failure
+  const fallbackQuotes = [
+    "Little strokes fell great oaks.",
+    "Courage is not the towering oak that sees storms come and go; it is the fragile blossom that opens in the snow.",
+  ];
 
   try {
     const response = UrlFetchApp.fetch("https://zenquotes.io/api/random");
@@ -54,7 +57,8 @@ function getCachedQuote() {
     debugLog("Failed to fetch motivational quote: " + error.message);
   }
 
-  return `🌱 ${fallbackQuote} 🌱`;
+  const randomIndex = Math.floor(Math.random() * fallbackQuotes.length);
+  return `🌱 ${fallbackQuotes[randomIndex]} 🌱`;
 }
 
 /**
@@ -238,10 +242,7 @@ function stock_summary_message(title, currencies, stocks, phrase = false) {
     );
   }
 
-  phrase &&
-    lines.push(
-      "\n🌷 Courage is not the towering oak that sees storms come and go; it is the fragile blossom that opens in the snow. 🌷",
-    );
+  phrase && lines.push(`\n🌷 ${getCachedQuote()} 🌷`);
   return lines.join("\n");
 }
 
