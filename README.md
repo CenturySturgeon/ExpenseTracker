@@ -66,31 +66,15 @@ flowchart LR
 
 ## Setup Instructions
 
+> **Pro-tip**: If you're not very technical, paste this document to an LLM of your choice, it will guide you through the setup and help you with any trouble you might find. 
+
 ### Step 1: Set Up Google Sheets
 
-Create a new Google Spreadsheet with the following tabs (sheets):
+- Single sheet config:
+  - Copy the following google sheet by opening [this link](https://docs.google.com/spreadsheets/d/1wxhi_5u_xfzwvsDIwX4xNNJxObxjZPtKkQahs0yyAOw/copy) in your browser.
 
-| Tab Name          | Purpose                                                | Columns (Row 1 = Headers)                                                                                                   |
-| ----------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `EXPENSES`        | Stores all expense entries                             | `Timestamp`, `Amount`, `Category`, `Subcategory`, `Description`                                                             |
-| `MONTHLY EXPENSES` | Monthly spending summary                               | Row 2, columns C through G: `Total Spent`, `Top Category`, `Top Category Total`, `Top Subcategory`, `Top Subcategory Total` |
-| `CATEGORIES`      | Auto-generated category and subcategory list           | Column headers are categories; subsequent rows contain subcategories                                                        |
-| `SPENDING`        | Aggregated spending data for reports                   | `Month`, `Category`, `Subcategory`, `Amount`                                                                                |
-| `TRACK`           | Stock tracking data                                    | `Ticker`, `Price`, (additional columns populated by API)                                                                    |
-| `CURRENCIES`      | Currency exchange rates                                | Columns include currency name and value                                                                                     |
-| `LOGS`            | Debug logs (optional, used when debug mode is enabled) | Single column for log messages                                                                                              |
-
-**Important:** Note down the **Spreadsheet ID** from the URL. It is the long string between `/d/` and `/edit`:
-
-```
-https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit
-```
-
-You can also create a separate read-only copy of the spreadsheet for report queries:
-
-```
-https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/copy
-```
+- Multi-sheet config:
+  - TO DO
 
 ### Step 2: Create a Telegram Bot
 
@@ -99,28 +83,28 @@ https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/copy
 3. Follow the prompts to choose a name and username for your bot.
 4. BotFather will provide you with a **bot token**. Save this token securely -- you will need it later.
 
-Optional: Set up menu button commands by running this curl command (replace `<YOUR_BOT_TOKEN>`):
+Optional: Set up menu button commands by running this curl command (replace `<YOUR_BOT_TOKEN>`). This is what makes the Telegram bot's chat have a nice menu you can click and select:
 
 ```bash
 curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setMyCommands" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "commands": [
-      { "command": "report", "description": "Get the current month spending log" },
-      { "command": "cats", "description": "List all logged categories" },
-      { "command": "stocks", "description": "Summary of tracked stocks" },
-      { "command": "track <ticker> [price]", "description": "Track a stock by ticker symbol" },
-      { "command": "help", "description": "Show available commands" }
-    ]
-  }'
+-H "Content-Type: application/json" \
+-d '{
+  "commands": [
+    { "command": "report", "description": "📆 Month'\''s expenses" },
+    { "command": "cats", "description": "🗂 Category list" },
+    { "command": "stocks", "description": "📊 Stock summary" },
+    { "command": "help", "description": "ℹ Help" }
+  ]
+}'
 ```
 
 ### Step 3: Configure Google Apps Script
 
+Go to https://script.google.com and create a new project.
+
 #### Option A: Manual Setup
 
-1. Go to https://script.google.com and create a new project.
-2. For each `.js` file in this repository, create a corresponding `.gs` file in the Apps Script editor and paste its contents:
+For each `.js` file in the repository, create a corresponding `.gs` file in the Apps Script editor and paste its contents:
 
 | Source File         | Apps Script File    | Purpose                                  |
 | ------------------- | ------------------- | ---------------------------------------- |
@@ -145,24 +129,23 @@ npm i -g @google/clasp
 # Authenticate
 clasp login
 
-# Create a new project
-clasp create --type appscript
+# Clone the project you just created using the Script ID (go to project settings)
+clasp clone <SCRIPT_ID>
 
-# Push local files to the project
+# Delete the Code.js file and then push the code
 clasp push
-
-# Deploy
-clasp deploy
 ```
 
-### Step 4: Set Environment Variables
+After this, go back to your project's editor in app scripts and you should now see all the code files.
+
+### Step 4: Set Environment Variables (Script Properties)
 
 In the Apps Script editor, go to **Project Settings** (gear icon) and scroll down to **Script Properties**. Add the following key-value pairs:
 
 | Key                    | Value Format               | Description                                                                                              | Example                                                                                                               |
 | ---------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `telegramToken`        | String                     | Your Telegram bot token from BotFather                                                                   | `123456789:ABCdefGHIjklMNOpqrSTUvwxYZ`                                                                                |
-| `spreadsheetIds`       | JSON object                | Map of spreadsheet IDs. Use `edit_sheet` for write operations and `read_only_sheet` for read-only access | `{"edit_sheet":"1aBcDeFgHiJkLmNoPqRsTuVwXyZ","read_only_sheet":"1xYzAbCdEfGhIjKlMnOpQrStUvW"}`                        |
+| `spreadsheetIds`       | JSON object                | Map of spreadsheet IDs. Use `edit_sheet` for write operations and `read_only_sheet` for read-only access | `{"edit_sheet":"1aBcDeFgHiJkLmNoPqRsTuVwXyZ","read_only_sheet":"1xYzAbCdEfGhIjKlMnOpQrStUvW"}` (for the single sheet config both of this sheets use your sheet's ID)                       |
 | `chatMap`              | JSON object                | Maps Telegram chat IDs to user aliases. Only listed users can use the bot                                | `{"1234567890":"Alice","9876543210":"Bob"}`                                                                           |
 | `secretToken`          | String                     | A secret token appended to the webhook URL for request validation                                        | `mySecretToken123`                                                                                                    |
 | `categoryEmojis`       | JSON object                | Maps category names to emojis (auto-updated when you include emojis in expense entries)                  | `{"Food":"\ud83c\udf57","Transport":"\ud83d\ude87","Travel":"\u2708\ufe0f"}`                                          |
@@ -193,6 +176,7 @@ function setupProperties() {
     logSheetName: "LOGS",
     readSpreadsheetNames: JSON.stringify({
       EXPENSES: "EXPENSES",
+      INCOME: "VARIABLE INCOME",
       MONTHLY: "MONTHLY SUMMARY",
       CATEGORIES: "CATEGORIES",
       SPENDING: "SPENDING",
@@ -224,6 +208,7 @@ https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
 You will need this URL in the next step.
 
 > **Important:** After making code changes, you must create a new deployment version for the updates to take effect. Go to **Deploy** > **Manage deployments**, select your deployment, click the pencil icon, increment the version number, and save.
+> **You must update the Telegram Webhook on each new deploy**
 
 ### Step 6: Set Telegram Webhook
 
@@ -235,7 +220,7 @@ Run this command in your terminal (replace placeholders with your actual values)
 curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?token=<YOUR_SECRET_TOKEN>"
+    "url": "https://script.google.com/macros/s/<YOUR_DEPLOYMENT_ID>/exec?token=<YOUR_SECRET_TOKEN>"
   }'
 ```
 
@@ -263,7 +248,7 @@ The response should show `"url"` matching your Web App URL and `"has_custom_cert
 curl "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/deleteWebhook"
 ```
 
-### Step 7: Configure Time-Driven Trigger (Optional)
+### Step 7: Configure Daily Stock Summary Time-Trigger (Optional)
 
 The bot supports a daily stock summary that runs on weekdays. To enable it:
 
@@ -357,6 +342,8 @@ flowchart LR
 - **Formula Injection Prevention**: By validating that imported data contains no formulas before bringing it into the Master Sheet, you prevent malicious users from injecting scripts via Telegram messages that could exfiltrate private data.
 - **Least Privilege Principle**: The bot operates with the minimum permissions necessary to function, delegating security enforcement to Google's native permission model rather than relying solely on code-level checks.
 
+**NOTE**: I haven't created the rest of the sheets, but they can be created from the Single Sheet Config one I shared in the beginning of this file.
+
 ## Usage
 
 ### Logging an Expense
@@ -374,8 +361,11 @@ Examples:
 25.50, Transport, Uber, Commute to work
 100, Travel
 ```
-
-Including an emoji with a category (e.g., `Food 🍽`) will automatically assign that emoji to the category for future reports.
+- **NOTE**:
+  - Including an emoji with a category (e.g., `Food 🍽`) will automatically assign that emoji to the category for future reports.
+  - Sending a negative amount will send it to the `VARIABLE INCOME` sheet, it's there should you want to register variable income.
+    - **I DO NOT recommend this**: Any income functionality should be added by you, this is the main reason the app works with Google sheets and not a database; to make it extensible by regular users and adapt it to their needs without outside help. 
+    - This has security implications should your bot or its Google account get compromissed so be carefull.
 
 ### Bot Commands
 
@@ -406,14 +396,16 @@ debug.js          -- Debug utility functions
 ## Security Notes
 
 1. **User Authentication:** Only chat IDs listed in the `chatMap` property are authorized to use the bot. All other requests are rejected.
+  - The `chatMap` dict's purpose is to eventually allow groups of users to write expenses with the bot (for businesses or households). 
+    - To be done...
 
-2. **Secret Token Validation:** The webhook URL includes a `token` query parameter. The `authenticate()` function validates this token on each incoming request, ensuring the request originated from your configured endpoint.
+2. **Secret Token Validation:** The webhook URL includes a `token` query parameter. The `authenticate()` function validates this token on each incoming request, ensuring the request originated from your configured endpoint. You can set this value to any random string, just don't use special characters that might break the request (ask an LLM of your choice about this).
 
 3. **Duplicate Update Prevention:** The bot stores the last processed Telegram `update_id` in script properties. Duplicate or replayed updates are silently ignored to prevent double-logging.
 
-4. **Separate Read/Write Sheets:** Use different spreadsheet IDs for `edit_sheet` and `read_only_sheet` to limit write access. Share only the read-only copy with others.
+4. **Separate Read/Write Sheets:** Use different spreadsheet IDs for `edit_sheet` and `read_only_sheet` to limit write access. Share only the read-only copy with the bot account (the bot account is the one running the App scripts web app).
 
-5. **Debug Mode:** Keep `debugMode` set to `"false"` in production. Debug mode logs all incoming requests to the LOGS sheet, which may contain sensitive information.
+5. **Debug Mode:** Keep `debugMode` set to `"false"` in production. Debug mode logs all incoming requests to the LOGS sheet, which may contain sensitive information and will eventually fill your sheet with garbage -> only use it to figure out where the App script's failing.
 
 ## Troubleshooting
 
