@@ -25,7 +25,7 @@ function handleExpenseEntry(text, chatId) {
     return;
   }
 
-  const amount = extractNumber(parts[0]);
+  let amount = extractNumber(parts[0]);
 
   let isIncome = false;
   if (amount < 0) {
