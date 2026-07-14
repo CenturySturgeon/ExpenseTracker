@@ -237,11 +237,11 @@ function parseInvestCommand(message) {
   }
 
   const commandBody = cleanSpaces(message.slice(7).trim()); // Removes '/invest'
-  const parts = commandBody.split(" ");
+  const parts = commandBody.split(",");
 
-  if (parts.length !== 4) {
+  if (parts.length !== 3) {
     throw new Error(
-      "Invalid format. Use: /invest {Operation} {Currency} {Ticker} {Shares}",
+      "Invalid format. Use: /invest {Operation}, {Ticker}, {Shares}",
     );
   }
 
@@ -254,16 +254,16 @@ function parseInvestCommand(message) {
   }
 
   // Validate currency
-  const currency = parts[1].toUpperCase();
-  const validCurrencies = ["USD", "CAD", "MXN", "EUR"];
-  if (!validCurrencies.includes(currency)) {
-    throw new Error(
-      `Invalid currency: '${parts[1]}'. Must be one of ${validCurrencies.join("/")}.`,
-    );
-  }
+  // const currency = parts[1].toUpperCase();
+  // const validCurrencies = ["USD", "CAD", "MXN", "EUR"];
+  // if (!validCurrencies.includes(currency)) {
+  //   throw new Error(
+  //     `Invalid currency: '${parts[1]}'. Must be one of ${validCurrencies.join("/")}.`,
+  //   );
+  // }
 
   // Validate ticker
-  const tickerPart = parts[2].trim();
+  const tickerPart = parts[1].trim();
   const tickerMatch = tickerPart.match(/^[A-Za-z.\-]+$/);
   if (!tickerMatch) {
     throw new Error(`Invalid ticker format: '${tickerPart}'`);
@@ -271,7 +271,7 @@ function parseInvestCommand(message) {
   const ticker = tickerPart.toUpperCase();
 
   // Validate shares
-  const sharesPart = parts[3].trim();
+  const sharesPart = parts[2].trim();
   let shares;
   try {
     shares = extractNumber(sharesPart);
@@ -282,6 +282,6 @@ function parseInvestCommand(message) {
     throw new Error(`Invalid shares format: '${sharesPart}'. ${e.message}`);
   }
 
-  return { operation, currency, ticker, shares };
+  return { operation, ticker, shares };
 }
 

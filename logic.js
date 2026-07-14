@@ -93,12 +93,12 @@ function handleInvestCommand(command, chatId) {
     return;
   }
 
-  const { operation, currency, ticker, shares } = parsed;
+  const { operation, ticker, shares } = parsed;
 
   // Fetch FX rate
   let fxRate;
   try {
-    fxRate = getFxRate(currency);
+    fxRate = getFxRate();
   } catch (e) {
     sendMessage(chatId, `❌ ${e.message}`);
     return;
@@ -107,7 +107,7 @@ function handleInvestCommand(command, chatId) {
   // Fetch stock price
   const stockPrice = getStockPrice(ticker);
 
-  // Construct row: [operation, currency, fx_rate, ticker, shares, price]
+  // Construct row: [date, operation, USD, fx_rate, ticker, shares, price]
   const row = [
     new Date().toLocaleDateString("en-US", {
       month: "2-digit",
@@ -115,7 +115,7 @@ function handleInvestCommand(command, chatId) {
       year: "numeric",
     }),
     operation,
-    currency,
+    "USD", // Yahoo finances and google sheets disagree on ticker names outside of US market: Making them match would be too much work
     fxRate,
     ticker,
     shares,
@@ -136,7 +136,7 @@ function handleInvestCommand(command, chatId) {
   // Send confirmation message
   const confirmation = invest_confirmation_message(
     operation,
-    currency,
+    baseCurrency,
     ticker,
     shares,
     fxRate,

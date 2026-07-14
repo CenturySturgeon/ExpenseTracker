@@ -141,7 +141,7 @@ function help_command_message() {
 
   💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\(not available\)_
 
-  🏛️  /invest {Operation} {Currency} {Ticker} {Shares} Registers a stock buy/sell transaction with real-time FX and price data
+  🏛️  /invest {Operation}, {Ticker}, {Shares} Registers a stock buy/sell transaction (US market only) with your sheet's target currency for FX
 
   ℹ️  /help Show this list of commands
 
@@ -160,7 +160,18 @@ $50, Food 🍗, Groceries, Green apples
 
 _Emojis on the category field will be assigned as the category emoji_
 
-More features coming soon\\! 💹
+🏛️ *Investing in a stock* 🏛️
+
+Send me a message with the following fields separated by commas:
+
+  • *Operation (buy/sell)*
+  • *Ticker of the stock*
+  • *Number of shares*
+
+*Example:*  
+/invest buy, nvda, 100
+
+- Only US market stocks will work properly (yahoo finances and google sheets use different tickers for other markets).
 `;
 }
 
@@ -179,7 +190,6 @@ function stock_tracked_confirmation_message(ticker, referencePrice) {
  * Telegram confirmation message after a stock transaction has been logged.
  *
  * @param {string} operation - The operation type (BUY or SELL).
- * @param {string} currency - The currency code (e.g., USD, CAD).
  * @param {string} ticker - The stock ticker symbol.
  * @param {number} shares - Number of shares transacted.
  * @param {number} fxRate - The FX rate used for conversion.
@@ -189,25 +199,27 @@ function stock_tracked_confirmation_message(ticker, referencePrice) {
  */
 function invest_confirmation_message(
   operation,
-  currency,
   ticker,
   shares,
   fxRate,
   stockPrice,
 ) {
+  const baseCurrency = getDefaultCurrency();
   const emoji = operation === "BUY" ? "🟢" : "🔴";
   let priceLine;
 
   if (stockPrice !== null && !isNaN(stockPrice)) {
     const totalCost = shares * stockPrice * fxRate;
-    priceLine = `💲 Price: ${currency_format(stockPrice)}\n💰 Total: ${currency_format(totalCost)}`;
+    priceLine = `💲 Price: ${currency_format(stockPrice)}\n💰 Total: ${currency_format(totalCost)} ${baseCurrency}`;
   } else {
     priceLine = `💲 Price: Unable to fetch\n💰 Total: Unable to calculate`;
   }
 
+  const fxString = baseCurrency.toUpperCase() === "USD" ? "" : `\n📊 *FX Rate:* ${fxRate.toFixed(2)} USD -> ${baseCurrency}`;
+
   return `${emoji} *${operation}* recorded ${emoji}
 
-📈 *Ticker:* ${ticker}\n🌍 *Currency:* ${currency}\n🔢 *Shares:* ${shares}\n📊 *FX Rate:* ${fxRate.toFixed(4)}
+📈 *Ticker:* ${ticker}\n🔢 *Shares:* ${shares}${fxString}}
 
 ${priceLine}`;
 }

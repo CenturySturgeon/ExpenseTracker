@@ -175,13 +175,14 @@ function getDefaultCurrency() {
  * @returns {number} The FX rate relative to USD.
  * @throws {Error} If the API call fails and no fallback is available.
  */
-function getFxRate(currency) {
+function getFxRate() {
   const baseCurrency = getDefaultCurrency();
-  if (currency.toUpperCase() === baseCurrency) return 1;
+  if ("USD" === baseCurrency.toUpperCase()) return 1;
 
+  // The target currency from the google sheet will be used as the FX rate causes tax obligations in most countries
   const cache = PropertiesService.getScriptProperties();
-  const cacheKey = `fx_${currency}`;
-  const timestampKey = `fx_timestamp_${currency}`;
+  const cacheKey = `fx_${baseCurrency}`;
+  const timestampKey = `fx_timestamp_${baseCurrency}`;
 
   // Check cache first
   const cachedRate = cache.getProperty(cacheKey);
@@ -197,9 +198,9 @@ function getFxRate(currency) {
     }
   }
 
-  // Fetch from Frankfurter API
+  // Fetch FX from Frankfurter API
   try {
-    const url = `https://api.frankfurter.dev/v1/latest?from=${currency}&to=${baseCurrency}`;
+    const url = `https://api.frankfurter.dev/v1/latest?from=USD&to=${baseCurrency}`;
     const response = UrlFetchApp.fetch(url);
     const data = JSON.parse(response.getContentText());
 
@@ -213,13 +214,13 @@ function getFxRate(currency) {
       throw new Error("Invalid API response structure");
     }
   } catch (error) {
-    debugLog(`Failed to fetch FX rate for ${currency}: ${error.message}`);
+    debugLog(`Failed to fetch FX rate for ${baseCurrency}: ${error.message}`);
     // Return cached value if available, otherwise throw
     if (cachedRate) {
       return parseFloat(cachedRate);
     }
     throw new Error(
-      `Failed to fetch FX rate for ${currency}. Please try again later.`,
+      `Failed to fetch FX rate for ${baseCurrency}. Please try again later.`,
     );
   }
 }
