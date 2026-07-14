@@ -136,7 +136,6 @@ function handleInvestCommand(command, chatId) {
   // Send confirmation message
   const confirmation = invest_confirmation_message(
     operation,
-    baseCurrency,
     ticker,
     shares,
     fxRate,
