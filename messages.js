@@ -137,7 +137,7 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
-  📈  /track {Ticker} {Price} Monitors a stock by ticker and a reference price set by you
+  📈  /track {Ticker} {Price}[Optional] Monitors a stock by ticker and a reference price set by you (uses current price if not provided)
 
   💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\(not available\)_
 
@@ -159,6 +159,17 @@ Send me a message with the following fields separated by commas:
 $50, Food 🍗, Groceries, Green apples
 
 _Emojis on the category field will be assigned as the category emoji_
+
+
+📈 *Tracking a stock* 📈
+
+Send me a message with the ticker and (optional) the reference price for market-price comparisson.
+
+*Examples:*
+NVDA 100
+
+If you omit the price the current market price will be used as reference in the future.
+
 
 🏛️ *Investing in a stock* 🏛️
 
