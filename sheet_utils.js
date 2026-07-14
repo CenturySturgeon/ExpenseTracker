@@ -127,3 +127,120 @@ function overwriteRow(rowIndex, row, sheetName) {
 function debugLog(message) {
   DEBUG_MODE && writeToSheet([message], LOG_SHEET);
 }
+
+/**
+ * Fetches the real-time FX rate from Frankfurter API.
+ * Returns 1 if currency is USD (base case).
+ * Caches result for ~24 hours to minimize API calls.
+ *
+ * @param {string} currency - The target currency code (e.g., 'CAD', 'MXN', 'EUR').
+ * @returns {number} The FX rate relative to USD.
+ * @throws {Error} If the API call fails and no fallback is available.
+ */
+function getFxRate(currency) {
+  if (currency === "USD") return 1;
+
+  const cache = PropertiesService.getScriptProperties();
+  const cacheKey = `fx_${currency}`;
+  const timestampKey = `fx_timestamp_${currency}`;
+
+  // Check cache first
+  const cachedRate = cache.getProperty(cacheKey);
+  const timestampStr = cache.getProperty(timestampKey);
+
+  if (cachedRate && timestampStr) {
+    const timestamp = parseInt(timestampStr, 10);
+    const now = Date.now();
+    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
+
+    if (now - timestamp < twentyFourHoursMs) {
+      return parseFloat(cachedRate);
+    }
+  }
+
+  // Fetch from Frankfurter API
+  try {
+    const url = `https://api.frankfurter.dev/latest?from=USD&to=${currency}`;
+    const response = UrlFetchApp.fetch(url);
+    const data = JSON.parse(response.getContentText());
+
+    if (data && data.rates && data.rates[currency]) {
+      const rate = data.rates[currency];
+      // Cache the result with timestamp
+      cache.setProperty(cacheKey, rate.toString());
+      cache.setProperty(timestampKey, Date.now().toString());
+      return rate;
+    } else {
+      throw new Error("Invalid API response structure");
+    }
+  } catch (error) {
+    debugLog(`Failed to fetch FX rate for ${currency}: ${error.message}`);
+    // Return cached value if available, otherwise throw
+    if (cachedRate) {
+      return parseFloat(cachedRate);
+    }
+    throw new Error(
+      `Failed to fetch FX rate for ${currency}. Please try again later.`,
+    );
+  }
+}
+
+/**
+ * Fetches the current stock price from Yahoo Finance unofficial endpoint.
+ * Caches result for ~24 hours per ticker to minimize API calls.
+ *
+ * @param {string} ticker - The stock ticker symbol (e.g., 'AAPL', 'MSFT').
+ * @returns {number|null} The current stock price, or null if fetch fails.
+ */
+function getStockPrice(ticker) {
+  const cache = PropertiesService.getScriptProperties();
+  const cacheKey = `stock_${ticker}`;
+  const timestampKey = `stock_timestamp_${ticker}`;
+
+  // Check cache first
+  const cachedPrice = cache.getProperty(cacheKey);
+  const timestampStr = cache.getProperty(timestampKey);
+
+  if (cachedPrice && timestampStr) {
+    const timestamp = parseInt(timestampStr, 10);
+    const now = Date.now();
+    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
+
+    if (now - timestamp < twentyFourHoursMs) {
+      return parseFloat(cachedPrice);
+    }
+  }
+
+  // Fetch from Yahoo Finance unofficial endpoint
+  try {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
+    const response = UrlFetchApp.fetch(url);
+    const data = JSON.parse(response.getContentText());
+
+    // Yahoo Finance returns price in result[0].meta.regularMarketPrice
+    if (
+      data &&
+      data.chart &&
+      data.chart.result &&
+      data.chart.result.length > 0
+    ) {
+      const meta = data.chart.result[0].meta;
+      const price = meta.regularMarketPrice;
+
+      if (typeof price === "number" && !isNaN(price)) {
+        // Cache the result with timestamp
+        cache.setProperty(cacheKey, price.toString());
+        cache.setProperty(timestampKey, Date.now().toString());
+        return price;
+      }
+    }
+    throw new Error("Invalid API response structure");
+  } catch (error) {
+    debugLog(`Failed to fetch stock price for ${ticker}: ${error.message}`);
+    // Return cached value if available, otherwise null
+    if (cachedPrice) {
+      return parseFloat(cachedPrice);
+    }
+    return null;
+  }
+}

@@ -71,7 +71,7 @@ flowchart LR
 ### Step 1: Set Up Google Sheets
 
 - Single sheet config:
-  - Copy the following google sheet by opening [this link](https://docs.google.com/spreadsheets/d/1wxhi_5u_xfzwvsDIwX4xNNJxObxjZPtKkQahs0yyAOw/copy) in your browser.
+  - Copy the following google sheet by opening [https://docs.google.com/spreadsheets/d/1wxhi_5u_xfzwvsDIwX4xNNJxObxjZPtKkQahs0yyAOw/copy](https://docs.google.com/spreadsheets/d/1wxhi_5u_xfzwvsDIwX4xNNJxObxjZPtKkQahs0yyAOw/copy) in your browser (it will automatically prompt you to copy this sheet into your account).
 
 - Multi-sheet config:
   - TO DO

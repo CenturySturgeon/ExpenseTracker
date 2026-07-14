@@ -76,6 +76,71 @@ function handleExpenseEntry(text, chatId) {
   }
 }
 
+/**
+ * Handles the /invest command: parses input, fetches FX rate and stock price,
+ * writes to Stock Txns sheet, and sends confirmation.
+ *
+ * @param {string} command - The full invest command string.
+ * @param {string} chatId - Telegram chat ID for response.
+ */
+function handleInvestCommand(command, chatId) {
+  let parsed;
+
+  try {
+    parsed = parseInvestCommand(command);
+  } catch (e) {
+    sendMessage(chatId, `❌ ${e.message}`);
+    return;
+  }
+
+  const { operation, currency, ticker, shares } = parsed;
+
+  // Fetch FX rate
+  let fxRate;
+  try {
+    fxRate = getFxRate(currency);
+  } catch (e) {
+    sendMessage(chatId, `❌ ${e.message}`);
+    return;
+  }
+
+  // Fetch stock price
+  const stockPrice = getStockPrice(ticker);
+
+  // Construct row: [operation, currency, fx_rate, ticker, shares, price]
+  const row = [
+    new Date(),
+    operation,
+    currency,
+    fxRate,
+    ticker,
+    shares,
+    stockPrice !== null ? stockPrice : "",
+  ];
+
+  try {
+    writeToSheet(row, STOCK_TXNS_SHEET, false);
+  } catch (e) {
+    debugLog("Error writing to Stock Txns sheet: " + e.message);
+    sendMessage(
+      chatId,
+      "❌ Error saving transaction. Please check if the 'Stock Txns' sheet exists.",
+    );
+    return;
+  }
+
+  // Send confirmation message
+  const confirmation = invest_confirmation_message(
+    operation,
+    currency,
+    ticker,
+    shares,
+    fxRate,
+    stockPrice,
+  );
+  sendMessage(chatId, confirmation);
+}
+
 function handleCommand(command, chatId) {
   debugLog("Sent message");
 
@@ -134,6 +199,8 @@ function handleCommand(command, chatId) {
       chatId,
       stock_tracked_confirmation_message(track_object.ticker, price),
     );
+  } else if (command.startsWith("/invest")) {
+    handleInvestCommand(command, chatId);
   } else if (command === "/report") {
     const expenses = readDataFromSheet("SPENDING").slice(1);
     const report = month_spending_message(expenses);

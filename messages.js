@@ -137,11 +137,11 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
-  📈  /track {Ticker} {Price} Monitors a stock by ticker and a reference price 
+  📈  /track {Ticker} {Price} Monitors a stock by ticker and a reference price set by you
 
   💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\(not available\)_
 
-  🏛️  /invest Gets a summary of your investment portfolio _\(not available\)_
+  🏛️  /invest {Operation} {Currency} {Ticker} {Shares} Registers a stock buy/sell transaction with real-time FX and price data
 
   ℹ️  /help Show this list of commands
 
@@ -162,6 +162,54 @@ _Emojis on the category field will be assigned as the category emoji_
 
 More features coming soon\\! 💹
 `;
+}
+
+/**
+ * Telegram confirmation message after a stock has been tracked.
+ * @param {string} ticker The ticker symbol of the stock.
+ * @param {number} referencePrice The price per share at the time of purchase.
+ * @return {string} The formatted one-line message the bot will reply with.
+ */
+function stock_tracked_confirmation_message(ticker, referencePrice) {
+  return `🚀  Tracking *${ticker}*  🚀
+🎯  Target:  ${currency_format(referencePrice)}`;
+}
+
+/**
+ * Telegram confirmation message after a stock transaction has been logged.
+ *
+ * @param {string} operation - The operation type (BUY or SELL).
+ * @param {string} currency - The currency code (e.g., USD, CAD).
+ * @param {string} ticker - The stock ticker symbol.
+ * @param {number} shares - Number of shares transacted.
+ * @param {number} fxRate - The FX rate used for conversion.
+ * @param {number|null} stockPrice - The current stock price (null if unavailable).
+ *
+ * @return {string} The formatted confirmation message the bot will reply with.
+ */
+function invest_confirmation_message(
+  operation,
+  currency,
+  ticker,
+  shares,
+  fxRate,
+  stockPrice,
+) {
+  const emoji = operation === "BUY" ? "🟢" : "🔴";
+  let priceLine;
+
+  if (stockPrice !== null && !isNaN(stockPrice)) {
+    const totalCost = shares * stockPrice * fxRate;
+    priceLine = `💲 Price: ${currency_format(stockPrice)}\n💰 Total: ${currency_format(totalCost)}`;
+  } else {
+    priceLine = `💲 Price: Unable to fetch\n💰 Total: Unable to calculate`;
+  }
+
+  return `${emoji} *${operation}* recorded ${emoji}
+
+📈 *Ticker:* ${ticker}\n🌍 *Currency:* ${currency}\n🔢 *Shares:* ${shares}\n📊 *FX Rate:* ${fxRate.toFixed(4)}
+
+${priceLine}`;
 }
 
 /**

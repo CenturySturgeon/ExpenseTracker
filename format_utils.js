@@ -220,3 +220,68 @@ function parseTrackCommand(message) {
 
   return price !== undefined ? { ticker, price } : { ticker };
 }
+
+/**
+ * Parses an invest command in the format "/invest {Operation} {Currency} {Ticker} {Shares}".
+ * Operation must be BUY or SELL, Currency must be USD/CAD/MXN/EUR,
+ * Ticker must match valid pattern, Shares must be positive number.
+ *
+ * @param {string} message - The input string containing the invest command.
+ * @returns {{ operation: string, currency: string, ticker: string, shares: number }}
+ *   An object with validated operation, currency, ticker, and shares.
+ * @throws {Error} If parsing fails with specific error messages.
+ */
+function parseInvestCommand(message) {
+  if (!message.startsWith("/invest")) {
+    throw new Error("Command must start with '/invest'");
+  }
+
+  const commandBody = cleanSpaces(message.slice(7).trim()); // Removes '/invest'
+  const parts = commandBody.split(" ");
+
+  if (parts.length !== 4) {
+    throw new Error(
+      "Invalid format. Use: /invest {Operation} {Currency} {Ticker} {Shares}",
+    );
+  }
+
+  // Validate operation
+  const operation = parts[0].toUpperCase();
+  if (operation !== "BUY" && operation !== "SELL") {
+    throw new Error(
+      `Invalid operation: '${parts[0]}'. Must be BUY or SELL.`,
+    );
+  }
+
+  // Validate currency
+  const currency = parts[1].toUpperCase();
+  const validCurrencies = ["USD", "CAD", "MXN", "EUR"];
+  if (!validCurrencies.includes(currency)) {
+    throw new Error(
+      `Invalid currency: '${parts[1]}'. Must be one of ${validCurrencies.join("/")}.`,
+    );
+  }
+
+  // Validate ticker
+  const tickerPart = parts[2].trim();
+  const tickerMatch = tickerPart.match(/^[A-Za-z.\-]+$/);
+  if (!tickerMatch) {
+    throw new Error(`Invalid ticker format: '${tickerPart}'`);
+  }
+  const ticker = tickerPart.toUpperCase();
+
+  // Validate shares
+  const sharesPart = parts[3].trim();
+  let shares;
+  try {
+    shares = extractNumber(sharesPart);
+    if (shares <= 0) {
+      throw new Error("Shares must be a positive number.");
+    }
+  } catch (e) {
+    throw new Error(`Invalid shares format: '${sharesPart}'. ${e.message}`);
+  }
+
+  return { operation, currency, ticker, shares };
+}
+
