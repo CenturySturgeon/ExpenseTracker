@@ -166,7 +166,7 @@ _Emojis on the category field will be assigned as the category emoji_
 Send me a message with the ticker and (optional) the reference price for market-price comparisson.
 
 *Examples:*
-NVDA 100
+/track NVDA 100
 
 If you omit the price the current market price will be used as reference in the future.
 
@@ -230,7 +230,7 @@ function invest_confirmation_message(
 
   return `${emoji} *${operation}* recorded ${emoji}
 
-📈 *Ticker:* ${ticker}\n🔢 *Shares:* ${shares}${fxString}}
+📈 *Ticker:* ${ticker}\n🔢 *Shares:* ${shares}${fxString}
 
 ${priceLine}`;
 }
