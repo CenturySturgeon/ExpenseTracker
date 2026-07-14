@@ -139,7 +139,7 @@ function help_command_message() {
 
   📈  /track {Ticker} {Price}[Optional] Monitors a stock by ticker and a reference price set by you (uses current price if not provided)
 
-  💳  /spending {Category}, {Subcategory} Gets the total amount spent for the given category, subcategory pair _\(not available\)_
+  💳  /spending {Category}, {Subcategory}[Optional] Gets the total amount spent for the given category, subcategory (if provided)
 
   🏛️  /invest {Operation}, {Ticker}, {Shares} Registers a stock buy/sell transaction (US market only) with your sheet's target currency for FX
 

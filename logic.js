@@ -145,6 +145,78 @@ function handleInvestCommand(command, chatId) {
   sendMessage(chatId, confirmation);
 }
 
+/**
+ * Handles the /spending command: parses input, reads the SPENDING sheet,
+ * performs lookup/aggregation by category and optional subcategory,
+ * and sends a formatted response.
+ *
+ * @param {string} command - The full spending command string.
+ * @param {string} chatId - Telegram chat ID for response.
+ */
+function handleSpendingCommand(command, chatId) {
+  const commandBody = cleanSpaces(command.slice(9).trim()); // Removes '/spending'
+
+  if (!commandBody) {
+    sendMessage(chatId, "Usage: /spending Category, Subcategory");
+    return;
+  }
+
+  const parts = commandBody.split(",");
+  const category = toTitleCase(cleanSpaces(parts[0]));
+
+  let subcategory = null;
+  if (parts.length > 1 && cleanSpaces(parts[1])) {
+    subcategory = toTitleCase(cleanSpaces(parts[1]));
+  }
+
+  // Read SPENDING sheet data, skip header row
+  const spendingData = readDataFromSheet("SPENDING").slice(1);
+
+  let total = 0;
+  let foundMatch = false;
+  let match = false;
+
+  for (const row of spendingData) {
+    const [, rowCategory, rowSubcategory, amount] = row;
+
+    // Skip rows where category is empty or falsy
+    if (!rowCategory) continue;
+
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) continue;
+
+    match = false;
+    if (subcategory !== null) {
+      // Match on both category and subcategory
+      if (String(rowCategory) === category && String(rowSubcategory) === subcategory) {
+        match = true;
+      }
+    } else {
+      // Match on category only, aggregate all matching subcategories
+      if (String(rowCategory) === category) {
+        match = true;
+      }
+    }
+
+    if (match) {
+      total += parsedAmount;
+      foundMatch = true;
+    }
+  }
+
+  if (!foundMatch) {
+    total = 0;
+  }
+
+  // Build label string
+  const label = subcategory !== null ? `${category} / ${subcategory}` : category;
+
+  // Format and send response
+  const formattedTotal = currency_format(total);
+  sendMessage(chatId, `💰 Total spent on ${label}: ${formattedTotal}`);
+}
+
+
 function handleCommand(command, chatId) {
   debugLog("Sent message");
 
@@ -205,6 +277,8 @@ function handleCommand(command, chatId) {
     );
   } else if (command.startsWith("/invest")) {
     handleInvestCommand(command, chatId);
+  } else if (command.startsWith("/spending")) {
+    handleSpendingCommand(command, chatId);
   } else if (command === "/report") {
     const expenses = readDataFromSheet("SPENDING").slice(1);
     const report = month_spending_message(expenses);
