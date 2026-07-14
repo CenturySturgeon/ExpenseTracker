@@ -109,7 +109,11 @@ function handleInvestCommand(command, chatId) {
 
   // Construct row: [operation, currency, fx_rate, ticker, shares, price]
   const row = [
-    new Date(),
+    new Date().toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    }),
     operation,
     currency,
     fxRate,

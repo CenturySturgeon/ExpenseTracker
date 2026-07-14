@@ -12,7 +12,14 @@ function writeToSheet(row, sheetName, addTimestamp = true) {
   }
 
   const writeRow = addTimestamp ? [new Date(), ...row] : row;
-  sheet.appendRow(writeRow);
+  // Find the actual last row with content in column A, then write to next row
+  const lastRowWithContent = sheet
+    .getRange("A:A")
+    .getValues()
+    .filter(String).length;
+  const nextRow = lastRowWithContent + 1;
+
+  sheet.getRange(nextRow, 1, 1, writeRow.length).setValues([writeRow]);
 }
 
 /**
