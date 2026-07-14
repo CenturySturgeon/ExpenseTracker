@@ -136,6 +136,37 @@ function debugLog(message) {
 }
 
 /**
+ * Returns the configured default/base currency.
+ * Lookup order: Script Property → CURRENCIES!F2 → fallback to "USD".
+ * @returns {string} The base currency code (e.g., "CAD", "EUR", "USD").
+ */
+function getDefaultCurrency() {
+  const cache = PropertiesService.getScriptProperties();
+
+  // Tier 1: Check Script Property cache
+  let defaultCurrency = cache.getProperty(DEFAULT_CURRENCY_KEY);
+  if (defaultCurrency) {
+    return defaultCurrency;
+  }
+
+  // Tier 2: Read from CURRENCIES sheet, cell F2 (row 2, column 6)
+  try {
+    const value = readSingleCell("CURRENCIES", 2, 6);
+    if (value && value.trim().length > 0) {
+      defaultCurrency = value.trim().toUpperCase();
+      cache.setProperty(DEFAULT_CURRENCY_KEY, defaultCurrency);
+      return defaultCurrency;
+    }
+  } catch (e) {
+    debugLog(`Failed to read default currency from CURRENCIES!F2: ${e.message}`);
+  }
+
+  // Tier 3: Fallback to USD
+  cache.setProperty(DEFAULT_CURRENCY_KEY, "USD");
+  return "USD";
+}
+
+/**
  * Fetches the real-time FX rate from Frankfurter API.
  * Returns 1 if currency is USD (base case).
  * Caches result for ~24 hours to minimize API calls.
@@ -145,7 +176,8 @@ function debugLog(message) {
  * @throws {Error} If the API call fails and no fallback is available.
  */
 function getFxRate(currency) {
-  if (currency === "USD") return 1;
+  const baseCurrency = getDefaultCurrency();
+  if (currency.toUpperCase() === baseCurrency) return 1;
 
   const cache = PropertiesService.getScriptProperties();
   const cacheKey = `fx_${currency}`;
@@ -167,7 +199,7 @@ function getFxRate(currency) {
 
   // Fetch from Frankfurter API
   try {
-    const url = `https://api.frankfurter.dev/v1/latest?from=USD&to=${currency}`;
+    const url = `https://api.frankfurter.dev/v1/latest?from=${currency}&to=${baseCurrency}`;
     const response = UrlFetchApp.fetch(url);
     const data = JSON.parse(response.getContentText());
 

@@ -12,6 +12,7 @@ const CURRENCY_EMOJIS_KEY = "currencyEmojis";
 const TRIGGERS_KEY = "triggers";
 const QUOTE_CACHE_KEY = "quoteCache";
 const QUOTE_TIMESTAMP_KEY = "quoteTimestamp";
+const DEFAULT_CURRENCY_KEY = "defaultCurrecy";
 
 // PropertiesService (env) Values
 const SCRIPT_PROPERTIES = PropertiesService.getScriptProperties();
