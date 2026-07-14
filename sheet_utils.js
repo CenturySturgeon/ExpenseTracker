@@ -167,7 +167,7 @@ function getFxRate(currency) {
 
   // Fetch from Frankfurter API
   try {
-    const url = `https://api.frankfurter.dev/latest?from=USD&to=${currency}`;
+    const url = `https://api.frankfurter.dev/v1/latest?from=USD&to=${currency}`;
     const response = UrlFetchApp.fetch(url);
     const data = JSON.parse(response.getContentText());
 
