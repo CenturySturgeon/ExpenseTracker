@@ -203,8 +203,8 @@ function getFxRate(currency) {
     const response = UrlFetchApp.fetch(url);
     const data = JSON.parse(response.getContentText());
 
-    if (data && data.rates && data.rates[currency]) {
-      const rate = data.rates[currency];
+    if (data && data.rates && data.rates[baseCurrency]) {
+      const rate = data.rates[baseCurrency];
       // Cache the result with timestamp
       cache.setProperty(cacheKey, rate.toString());
       cache.setProperty(timestampKey, Date.now().toString());
