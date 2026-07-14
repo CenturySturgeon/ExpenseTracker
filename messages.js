@@ -137,9 +137,9 @@ function help_command_message() {
 
   📊  /stocks Gets a summary of your tracked stocks
 
-  📈  /track {Ticker} {Price}[Optional] Monitors a stock by ticker and a reference price set by you (uses current price if not provided)
+  📈  /track {Ticker} {Price}\[Optional\] Monitors a stock by ticker and a reference price set by you (uses current price if not provided)
 
-  💳  /spending {Category}, {Subcategory}[Optional] Gets the total amount spent for the given category, subcategory (if provided)
+  💳  /spending {Category}, {Subcategory}\[Optional\] Gets the total amount spent for the given category, subcategory (if provided)
 
   🏛️  /invest {Operation}, {Ticker}, {Shares} Registers a stock buy/sell transaction (US market only) with your sheet's target currency for FX
 
@@ -152,8 +152,8 @@ Send me a message with the following fields separated by commas:
 
   • *Amount*
   • *Category*
-  • Subcategory _\\(optional\\)_
-  • Description _\\(optional\\)_
+  • Subcategory _\(optional\)_
+  • Description _\(optional\)_
 
 *Example:*  
 $50, Food 🍗, Groceries, Green apples
